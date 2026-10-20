@@ -15,7 +15,7 @@ Steps:
   3. patch the .tex: vector PDF figures instead of the PNGs; Appendix A (board), B (schematic) and
      C (parts list) and D (fixtures) each start on a right-hand page (twoside + cleardoublepage, blank
      versos say so) so A.1, A.2, B and C have nothing on their backs; E (cable, landscape) is the back of D;
-     taller rows on the record sheets
+     the record sheets become full grids (boxed cells, tall rows) for writing readings in by hand
   4. lualatex x3 (LastPage needs the extra passes)
 
 Usage (from the project root, needs pandoc + LuaLaTeX with fontspec/fancyhdr/lastpage):
@@ -32,7 +32,7 @@ import shutil
 import subprocess
 import sys
 
-VERSION = "1.7"
+VERSION = "1.8"
 BOARD_REV = "0.2.3"      # the boards the plan is written for; the frozen drawing docs/img/board_populated_v0.2.3.*
 CREATED = "2026-10-19"
 UPDATED = "2026-10-19"
@@ -65,6 +65,31 @@ HEADER = r"""
 \setlength{\LTpre}{6pt}\setlength{\LTpost}{6pt}
 \renewcommand{\arraystretch}{1.25}
 """.replace("VER", VERSION).replace("CRE", CREATED).replace("UPD", UPDATED)
+
+
+def grid_record_sheets(s):
+    """Section 5 tables -> full grids (every cell boxed) so readings can be written in by hand.
+    pandoc emits booktabs longtables; here, between '5. Record sheets' and '6. TODO', the column spec
+    becomes |p|c|c|c|c|c| and every row gets a \\hline."""
+    a = s.index("5. Record sheets")
+    b = s.index("6. TODO", a)
+    region = s[a:b]
+    spec = ("\\begin{longtable}[]{|>{\\raggedright\\arraybackslash}p{0.40\\linewidth}|"
+            "*{5}{>{\\centering\\arraybackslash}p{0.085\\linewidth}|}}")
+    region = re.sub(r"\\begin\{longtable\}\[\]\{@\{\}.*?@\{\}\}", lambda m: spec, region, flags=re.S)
+    region = re.sub(r"\\begin\{minipage\}\[b\]\{\\linewidth\}\\raggedright\n(.*?)\n\\end\{minipage\}",
+                    lambda m: "\\textbf{" + m.group(1) + "}", region, flags=re.S)
+    region = region.replace("\\toprule\\noalign{}", "\\hline").replace("\\midrule\\noalign{}", "\\hline")
+    region = region.replace("\\bottomrule\\noalign{}", "")
+    out = []
+    for table in region.split("\\endlastfoot"):
+        if "\\end{longtable}" in table:
+            body, rest = table.split("\\end{longtable}", 1)
+            body = re.sub(r"\\\\\n", lambda m: "\\\\ \\hline\n", body)
+            table = body + "\\end{longtable}" + rest
+        out.append(table)
+    region = "\\endlastfoot".join(out)
+    return s[:a] + region + s[b:]
 
 
 def run(cmd, cwd):
@@ -128,7 +153,8 @@ def main():
 
     s = before_heading(s, "0.7 Design-review findings", "\\clearpage")
     s = before_heading(s, "Phase 1 --- Unpowered", "\\clearpage")
-    s = before_heading(s, "5. Record sheets", "\\clearpage\\renewcommand{\\arraystretch}{2.1}")
+    s = before_heading(s, "5. Record sheets", "\\clearpage\\renewcommand{\\arraystretch}{2.3}")
+    s = grid_record_sheets(s)
     s = before_heading(s, "6. TODO", "\\renewcommand{\\arraystretch}{1.25}")
     s = before_heading(s, "Appendix A ---", "\\cleardoublepage")
     s = before_heading(s, "A.2 Legend for", "\\cleardoublepage")

@@ -1,6 +1,6 @@
 # Test Plan — TRS-80 Model I / Shugart Drive Monitor
 
-Document: `docs/TEST_PLAN.md` · Project: **trs80-m1-drive-monitor** (https://github.com/xtracool/trs80-m1-drive-monitor), board `sa400_led_monitor` · Test-plan version **1.7** · created 2026-10-19 · updated 2026-10-19 · revision history: Appendix F
+Document: `docs/TEST_PLAN.md` · Project: **trs80-m1-drive-monitor** (https://github.com/xtracool/trs80-m1-drive-monitor), board `sa400_led_monitor` · Test-plan version **1.8** · created 2026-10-19 · updated 2026-10-19 · revision history: Appendix F
 
 Colour key: <span style="color:#b00000">**red** = a stop condition, a limit not to exceed, or a correction to an earlier document</span> · <span style="color:#0040a0">**blue** = new or changed since revision 1.2 (the 2026-10-19 design review; 1.5 = the J2 handedness check)</span>
 
@@ -537,7 +537,7 @@ then **3.3.1–3.3.4** briefly.
 
 ## 5. Record sheets
 
-Tick ✓ or write the reading. One column per board.
+Tick ✓ or write the reading in the box. One column per board.
 
 ### 5.1 Phase 1
 
@@ -702,7 +702,8 @@ Off-board parts for the test run (not on the board). Drawings: Appendix D (jig, 
 | 1.4 | 2026-10-19 | Appendix D test-fixture drawings (jig, power pigtail, key plug), Appendix E cable drawing |
 | 1.5 | 2026-10-19 | J2 handedness check 1.1.6a before any power; J2 hand-fitted (JLCPCB left it off all five boards); board drawing frozen at v0.2.3; GitHub repo is the hand-off point |
 | 1.6 | 2026-10-19 | Only A.1, A.2, B and C have blank backs; D and E share a sheet |
-| 1.7 | 2026-10-19 | <span style="color:#0040a0">Renamed for the repo (trs80-m1-drive-monitor); §1.0 explains ohms / continuity / diode mode and meter polarity for the unpowered checks; revision history moved here</span> |
+| 1.7 | 2026-10-19 | Renamed for the repo (trs80-m1-drive-monitor); §1.0 explains ohms / continuity / diode mode and meter polarity for the unpowered checks; revision history moved here |
+| 1.8 | 2026-10-19 | <span style="color:#0040a0">Record sheets (§5) as full grids, boxed cells, for writing readings in by hand</span> |
 
 The plan is built from `docs/TEST_PLAN.md` by `pdf/build_test_plan.py` (pandoc + LuaLaTeX); each build's PDF is
 `pdf/trs80-m1-drive-monitor_test_plan_v<version>.pdf` and a copy sits at the top of the repo.

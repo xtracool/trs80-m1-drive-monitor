@@ -1,0 +1,2198 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  10pt,
+  twoside]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+  \setmainfont[]{DejaVu Sans}
+  \setsansfont[]{DejaVu Sans}
+  \setmonofont[]{DejaVu Sans Mono}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=0.7in,footskip=0.4in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+\usepackage{xcolor}
+\usepackage{float}
+\floatplacement{figure}{H}
+\usepackage{pdflscape}
+% blank verso pages (double-sided printing) carry a note instead of nothing
+\makeatletter
+\renewcommand{\cleardoublepage}{\clearpage\if@twoside\ifodd\c@page\else
+  \null\vfill{\centering\small\textit{This page is intentionally blank (double-sided printing).}\par}\vfill\newpage\fi\fi}
+\makeatother
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{etoolbox}
+\newcommand{\tpfoot}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0.4pt}%
+\fancyfoot[L]{\scriptsize trs80-m1-drive-monitor · TEST\_PLAN · Version 1.8}%
+\fancyfoot[R]{\scriptsize Created 2026-10-19 · Updated 2026-10-19 · Page \thepage\ of \pageref*{LastPage}}}
+\pagestyle{fancy}\tpfoot
+\fancypagestyle{plain}{\tpfoot}
+\AtBeginEnvironment{longtable}{\footnotesize}
+\AtBeginEnvironment{Shaded}{\footnotesize}
+\setlength{\LTpre}{6pt}\setlength{\LTpost}{6pt}
+\renewcommand{\arraystretch}{1.25}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{test-plan-trs-80-model-i-shugart-drive-monitor}{%
+\section{Test Plan --- TRS-80 Model I / Shugart Drive
+Monitor}\label{test-plan-trs-80-model-i-shugart-drive-monitor}}
+
+Document: \texttt{docs/TEST\_PLAN.md} · Project:
+\textbf{trs80-m1-drive-monitor}
+(https://github.com/xtracool/trs80-m1-drive-monitor), board
+\texttt{sa400\_led\_monitor} · Test-plan version
+\textbf{1.8} · created 2026-10-19 · updated 2026-10-19 ·
+revision history: Appendix F
+
+Colour key: \textcolor[HTML]{B00000}{\textbf{red} = a stop
+condition, a limit not to exceed, or a correction to an
+earlier document} · \textcolor[HTML]{0040A0}{\textbf{blue} =
+new or changed since revision 1.2 (the 2026-10-19 design
+review; 1.5 = the J2 handedness check)}
+
+Applies to: the five \textbf{v0.2.3} boards in hand (copper
+identical to v0.2.2; the 0.2.3 gerber changed Q1's
+silkscreen only), populated by JLCPCB from the \textbf{r2}
+BOM/CPL in \texttt{jlcpcb\_v0.2.2/}.
+\textcolor[HTML]{0040A0}{\textbf{J2 is not fitted on any of
+them}: JLCPCB's Economic PCBA places one side only and J2
+was the lone solder-side part. It is fitted by hand after
+the handedness check in 1.1.6a. The v0.2.4 design (J2 on the
+component side) is not fabricated yet; the result of 1.1.6a
+decides its \texttt{J2\_PIN1\_X} / \texttt{J2\_PIN\_DIR}.}
+
+Source of truth:
+https://github.com/xtracool/trs80-m1-drive-monitor --- pull
+before a test session, push the filled-in record sheets and
+any plan change after it (commit message
+\texttt{testplan\ vN.M:\ \textless{}what\textgreater{}}).
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{read-this-first}{%
+\subsection{0. Read this first}\label{read-this-first}}
+
+\hypertarget{what-the-three-phases-prove}{%
+\subsubsection{0.1 What the three phases
+prove}\label{what-the-three-phases-prove}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Phase
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Setup
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What it proves
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Can it damage the TRS-80?
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{1 --- Unpowered} & Board only, DMM only & Assembly
+is right (orientation, values, no shorts); the bus fingers
+connect only where the design says & No --- nothing is
+powered \\
+\textbf{2 --- Bench power} & Board + current-limited bench
+supply + a simple bus-simulator jig & Logic and LEDs work;
+the protection works; the \textbf{most} current and voltage
+the board can ever put on a bus line, measured & No --- the
+EI and drives are not connected \\
+\textbf{3 --- On the EI} & Board on the real cable with the
+Expansion Interface, then with drives & Works with real
+signals; does not disturb disk I/O; safe in every
+power-on/power-off order & Only if a Phase 1 or 2 check was
+skipped or failed \\
+\end{longtable}
+
+\hypertarget{rules}{%
+\subsubsection{0.2 Rules}\label{rules}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Do the phases in order, on each board.} A board
+  does not go to the next phase until every check in the
+  current phase passes.
+\item
+  \textbf{Stop on the first out-of-spec reading.} Power off,
+  write it down, and fix or diagnose before going on. Do not
+  ``see if it works anyway'' with the EI attached.
+\item
+  \textbf{Never plug or unplug the card edge (J1) with
+  anything powered.} Power (J2) may be unplugged while
+  running only in step 3.5, which is designed for it.
+\item
+  \textbf{Board 1 goes all the way through first.} Boards
+  2--5 do Phase 1 and Phase 2 sections 2.1--2.6. Only board
+  1 does the protection tests in 2.7 and 2.8 (they stress
+  parts on purpose).
+\item
+  Write a serial number (1--5) on each board's silkscreen
+  with a marker, and record results in the sheets in section
+  5.
+\end{enumerate}
+
+\hypertarget{as-built-values-r2-bom-these-differ-from-older-docs}{%
+\subsubsection{0.3 As-built values (r2 BOM): these differ
+from older
+docs}\label{as-built-values-r2-bom-these-differ-from-older-docs}}
+
+\texttt{docs/BOM.md} and \texttt{THEORY\_OF\_OPERATION.md}
+still show the design-time values. The boards were built
+from the r2 BOM, so \textbf{this plan uses the r2 values}:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Ref
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Design docs say
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{As built (r2)}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Effect on readings
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+R1--R8 (drive LEDs), R21 (5V LED) & 1.5 kΩ & \textbf{470 Ω}
+& LEDs run ≈ 5.5--6.5 mA (still inside the 74LS00's 8 mA
+sink rating) \\
+R19 (12V LED) & 4.7 kΩ & \textbf{2.2 kΩ} & D12 runs ≈ 4.5
+mA \\
+Q1 & NDP6020P & \textbf{IRF4905PBF} (same G-D-S pinout) &
+Specified for V\_GS = −10 V; at our −5 V it should still be
+fully on at 35 mA, and \textbf{step 2.3 measures that} \\
+R9--R13, R14--R18 & 10 kΩ, 470 Ω & same & --- \\
+\end{longtable}
+
+\hypertarget{reference-map-used-throughout}{%
+\subsubsection{0.4 Reference map (used
+throughout)}\label{reference-map-used-throughout}}
+
+\textbf{J1 card edge.} Even pins are on the component side,
+odd pins on the solder side directly underneath.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 16\tabcolsep) * \real{0.1111}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Signal
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+J1 pin
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Its GND partner (under it)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Series R (finger → receiver)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Pull-up
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+U1 input
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+U1 output
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Red LED / driver
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Green LED / driver
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+DS1 (TRS-80 drive :0) & 10 & 9 & R17 & R9 & U1-1 & U1-2 & D1
+/ U3-2 & D5 / U2-3 \\
+DS2 (drive :1) & 12 & 11 & R16 & R10 & U1-3 & U1-4 & D2 /
+U3-4 & D6 / U2-6 \\
+DS3 (drive :2) & 14 & 13 & R15 & R11 & U1-5 & U1-6 & D3 /
+U3-6 & D7 / U2-8 \\
+DS4 (drive :3) & 6 & 5 & R18 & R12 & U1-9 & U1-8 & D4 / U3-8
+& D8 / U2-11 \\
+WRITE GATE & 24 & 23 & R14 & R13 & U1-11 & U1-10 & --- &
+(all greens through U2) \\
+\end{longtable}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{GND fingers (15):} 3, 5, 7, 9, 11, 13, 15, 17, 19,
+  21, 23, 25, 27, 29, 31.
+\item
+  \textbf{No-connect fingers (14):} 1 and 33 (they sit over
+  the clip holes), and 2, 4, 8, 16, 18, 20, 22, 26, 28, 30,
+  32, 34.
+\end{itemize}
+
+\textbf{J2 power (Mate-N-Lok, pads on the solder side of the
+0.2.3 boards, pin 1 = square pad at the Q1 end).} 1 = +12 V,
+2 = +12 RTN, 3 = +5 RTN, 4 = +5 V.
+\textcolor[HTML]{0040A0}{Not fitted by JLCPCB; hand-fitted
+on whichever side 1.1.6a says.} This is the same connector
+and pinout as a PC ``Molex'' 4-pin peripheral plug (yellow
++12, black, black, red +5).
+
+\textbf{Power path.} J2-4 → F1 (PTC) → Q1 pin 2 (drain) → Q1
+pin 3 (source) = \textbf{+5V rail} (also U1/U2/U3 pin 14,
+D11 cathode, C4+). Q1 pin 1 (gate) = GND. J2-1 → R19 → D12 →
+GND only.
+
+\textbf{Handy test points.} The vertical resistors stand up
+with one lead looped over the top. That loop is a good probe
+point, but which net it is on depends on which way JLCPCB
+stood the part up. \textbf{Before you use any resistor loop
+as a test point, check it with the DMM against the finger or
+the IC pin.}
+
+\hypertarget{equipment}{%
+\subsubsection{0.5 Equipment}\label{equipment}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Item
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Needed for
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Notes
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+DMM with ohms, diode, DC volts, DC mA & all & A second DMM
+to watch current while you probe saves time \\
+Bench supply, adjustable 0--15 V, \textbf{adjustable current
+limit} & 2, 3 & Two outputs is ideal (one for the board, one
+for the jig pull-ups). The outputs must be floating (not
+tied to earth on +) \\
+Power pigtail for J2 (drawing: Appendix D.2) & 2, 3 & TE/AMP
+1-480424-0 housing + 60619-1 pins ---
+https://www.te.com/en/product-1-480424-0.html · pins
+https://www.mouser.com/c/?q=60619-1 --- or any PC
+Molex-to-bare-wire cable (same connector). Label the
+wires. \\
+\textbf{Bus-simulator jig} (section 0.6, drawing: Appendix
+D.1) & 2 & Recommended. The fallback is clip leads on the
+fingers, which risks scratching the gold or bridging two
+fingers \\
+IC extractor, ESD strap & 1, 2.7, 2.8 & ICs are socketed, so
+you can pull them for the protection tests \\
+Scope (optional) & 3.3 & Best way to show the board doesn't
+change bus levels or edges \\
+IR thermometer or fingertip & 2, 3.6 & Heat check \\
+Scratch diskettes (2+) & 3 & \textbf{Never test writes on a
+disk you care about} \\
+\end{longtable}
+
+\hypertarget{bus-simulator-jig-fake-ei}{%
+\subsubsection{0.6 Bus-simulator jig (``fake
+EI'')}\label{bus-simulator-jig-fake-ei}}
+
+Drawing: \textbf{Appendix D.1}. Power pigtail: \textbf{D.2}.
+Key plug: \textbf{D.3}. Cable for Phase 3: \textbf{Appendix
+E}.
+
+This stands in for the EI's open-collector drivers and the
+terminating drive. Each line is held high by 150 Ω (like the
+terminator), and a switch pulls it to ground (like a 7438
+asserting the line).
+
+\begin{verbatim}
+ 3M 3463-0001 card-edge IDC  --  ~150 mm 34-way ribbon  --  cut end; separate:
+   (red stripe = pin 1)            signals : 6, 10, 12, 14, 24
+                                   GND     : 5, 9, 11, 13, 23 (twist together)
+
+ Each signal conductor (x5):
+
+   +5V_JIG --[JP on/off]--[150 R]--+-- conductor 6 / 10 / 12 / 14 / 24
+                                   |
+                                 [SW n]   closed = ASSERTED
+                                   |
+                                  GND --- GND conductors + bench supply (-)
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Use a 3463-0001 from the cable build:
+  https://www.mouser.com/c/?q=3463-0001
+\item
+  Ribbon conductor N = J1 pin N when the stripe is on pin 1
+  of the IDC connector. Before you trust the jig, check that
+  with the DMM.
+\item
+  \textbf{JP} turns the five 150 Ω pull-ups on or off.
+  \emph{Off} = the board's own 10 k pull-ups only. \emph{On}
+  = simulates a terminated bus. +5V\_JIG comes from the
+  second bench output (or the same output, but then the
+  board-current reading also includes the jig current).
+\item
+  Five switches, labelled DS1 DS2 DS3 DS4 WG.
+\end{itemize}
+
+\clearpage
+\hypertarget{design-review-findings-2026-10-19-and-where-each-one-is-tested}{%
+\subsubsection{0.7 Design-review findings (2026-10-19) and
+where each one is
+tested}\label{design-review-findings-2026-10-19-and-where-each-one-is-tested}}
+
+\textcolor[HTML]{0040A0}{Added in 1.2. A review of the
+v0.2.2 design against the datasheets found one real margin
+issue (F1) and three smaller points. None of them stops the
+test run; each is tied to a step below.}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.0256}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.5385}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.1282}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.3077}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Finding
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Tested at
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+What to do
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+F1 & \textcolor[HTML]{0040A0}{\textbf{Receiver low-level
+margin.} When a bus line is low, the LS14 input current (0.4
+mA max) \emph{and} the R9--R13 pull-up current (≈ 0.44 mA)
+both flow out through the 470 Ω series resistor. Worst case
+the U1 input sits at ≈ 0.79 V (0.4 V VOL + 0.84 mA × 470 Ω)
+against a 74LS14 VT− of 0.5 V min / 0.8 V typ / 1.0 V max.
+Typical parts give ≈ 0.55 V, so it works on typical margin.}
+\textcolor[HTML]{B00000}{THEORY §3.0's 0.59 V figure left
+out the pull-up term; corrected there.} & \textbf{3.3.7}
+(the number that matters), 3.2.5, 2.6.17 & If 3.3.7 reads
+\textgreater{} 0.5 V: fit a \textbf{74HCT14} in U1's socket
+(no soldering; input current is µA, which removes ≈ 0.19 V).
+Optionally R9--R13 → 47--100 k (removes most of the other ≈
+0.2 V). v0.3: pull-ups move to the finger side of R14--R18
+(V0.3\_PLAN). \\
+F2 & \textcolor[HTML]{0040A0}{\textbf{+12 V on the +5 V pin}
+is harsher than THEORY §4.3 said. A cold 0.5 A PTC is ≈ 0.5
+Ω, so until F1 trips D11 takes whatever the supply will
+deliver at ≈ 6 V. F1 trips and the EI never sees it, but D11
+may fail (normally short: board dead, still safe).} & 2.7.4
+& Stays optional. \textcolor[HTML]{B00000}{Expect to lose
+D11 if you run it from a stiff supply.} The Mate-N-Lok is
+keyed; this fault needs a hand-made cable. \\
+F3 & \textcolor[HTML]{0040A0}{\textbf{D12 reverse rating.}
+Reversed +12 V puts ≈ 7 V reverse across D12 (5 mm LEDs are
+rated ≈ 5 V) at ≈ 3 mA through R19. Likely survives, but out
+of spec.} & 2.7.2 & Run it knowing that, or skip it. v0.3:
+1N4148 in series with D12. \\
+F4 & \textcolor[HTML]{0040A0}{Minor: D11 (5.6 V, soft knee)
+leaks a few mA at 5.25 V and runs slightly warm; U2 sinks ≈
+5.3 mA per green LED with the as-built 470 Ω (LS00 rating 8
+mA); IRF4905 at V\_GS = −5 V.} & 2.4.2, 2.6.20, 2.3 &
+Record. The 74LS37 is a pin-compatible 24 mA drop-in for U2
+if brighter greens are wanted later. \\
+\end{longtable}
+
+Checked in the same review and found right: Q1's orientation
+(drain in, source out, gate to ground is the correct way
+round for a P-channel reverse-polarity switch), all unused
+inputs tied, no path from +12 V to either the rail or the
+bus, ≤ 12 mA worst case into an EI line, no termination, the
+LS06 for the reds, and U1's fan-out.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\clearpage
+\hypertarget{phase-1-unpowered-no-supply-not-on-the-ei}{%
+\subsection{Phase 1 --- Unpowered (no supply, not on the
+EI)}\label{phase-1-unpowered-no-supply-not-on-the-ei}}
+
+Board fully assembled, ICs in their sockets, nothing plugged
+into J1 or J2. Hold the DMM leads still while a reading
+settles, because the capacitors charge through the meter.
+
+\hypertarget{how-a-meter-measures-anything-on-an-unpowered-board}{%
+\subsubsection{1.0 How a meter measures anything on an
+unpowered
+board}\label{how-a-meter-measures-anything-on-an-unpowered-board}}
+
+\textcolor[HTML]{0040A0}{Nothing in Phase 1 is powered by a
+supply. \textbf{The meter is the power source.} In the ohms,
+continuity and diode ranges a DMM pushes a small current out
+of one probe, through whatever is between the probes, back
+into the other probe, and reads the voltage that results.
+The current comes from the meter's own battery and is tiny
+(roughly 0.1--1 mA, open-circuit voltage about 1--3 V
+depending on the meter), so it cannot hurt the board.}
+
+\begin{itemize}
+\tightlist
+\item
+  \textcolor[HTML]{0040A0}{\textbf{Ohms (Ω).} The meter
+  forces a known current and shows V/I as a resistance. Good
+  for resistors and wires. Across a capacitor the reading
+  climbs while the capacitor charges from that current ---
+  that is why you hold the probes still until it settles
+  (1.2.4). Across a diode or an IC pin the number depends on
+  the meter's test current, so it is not meaningful; use
+  diode mode for those.}
+\item
+  \textcolor[HTML]{0040A0}{\textbf{Continuity (the beeper,
+  usually the same dial position as diode mode or the lowest
+  ohms range).} Ohms with a buzzer that sounds below a
+  threshold, typically 20--50 Ω. Used for ``is this pad
+  connected to that pad''.}
+\item
+  \textcolor[HTML]{0040A0}{\textbf{Diode mode (the
+  ▷\textbar{} symbol on the dial; on many meters the same
+  position as continuity, and a SELECT / FUNC button toggles
+  between beeper and diode).} The meter forces about 1 mA
+  and \textbf{displays the voltage across the probes in
+  volts}. A silicon junction conducting forward shows ≈
+  0.5--0.7 V; a Schottky ≈ 0.2--0.4 V; an LED ≈ 1.6--2.2 V
+  and usually glows faintly; a junction that is
+  reverse-biased, or anything open, shows \textbf{OL} (the
+  meter's few volts are not enough to break it over; a 5.6 V
+  Zener in reverse reads OL too). So ``0.4--0.7 V'' in 1.3
+  and ``1.5--2.1 V'' in 1.5 are forward drops at the meter's
+  1 mA, not supply voltages. In circuit, parallel paths can
+  lower a reading; the tables already allow for that.}
+\item
+  \textcolor[HTML]{0040A0}{\textbf{Polarity.} In ohms and
+  diode mode the \textbf{red} probe is the meter's positive
+  output on practically every modern DMM, so a diode reads
+  its forward drop with red on the anode, black on the
+  cathode. A few older or cheap meters are reversed. Check
+  yours once before 1.3: put red on the anode (round pad)
+  and black on the cathode (square pad) of any LED on the
+  board, D13 say. If it reads 1.5--2.2 V (and glows), the
+  polarity is as assumed; if that way reads OL and the
+  swapped way reads the voltage, your meter is reversed and
+  you swap ``red'' and ``black'' everywhere in 1.3 and 1.5.}
+\item
+  \textcolor[HTML]{0040A0}{\textbf{No diode mode on your
+  meter?} Use the 2 kΩ or 20 kΩ range instead. A junction
+  then reads something in the hundreds of ohms to a few kΩ
+  one way and OL the other; the number itself means nothing,
+  the asymmetry is the result. The pass criteria in 1.3
+  become ``low one way, OL the other'', same lead
+  placement.}
+\end{itemize}
+
+\hypertarget{visual-and-mechanical}{%
+\subsubsection{1.1 Visual and
+mechanical}\label{visual-and-mechanical}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Check
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Pass
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1.1.1 & U1 = 74LS14, U2 = 74LS00, U3 = 74LS06, each in the
+correct position, notch matches the silk, every pin inside
+the socket (none folded under) & ✓ \\
+1.1.2 & Q1 is the IRF4905: pin 1 (gate) in the square pad,
+metal tab on the side shown by the silkscreen & ✓ \\
+1.1.3 & D11: band (cathode) at the square pad. C4: + lead at
+the square pad & ✓ \\
+1.1.4 & All LEDs: flat side / short lead (cathode) at the
+square pad. Colours: D1--D4 red, D5--D8 green, D12--D13
+yellow & ✓ \\
+1.1.5 & Resistor colour bands: R1--R8, R21, R14--R18 = 470 Ω
+(yellow-violet-brown); R9--R13 = 10 k (brown-black-orange);
+R19 = 2.2 k (red-red-black-brown for 1 \%) & ✓ \\
+1.1.6 & \textcolor[HTML]{0040A0}{J2 is \textbf{not fitted}
+(JLCPCB left it off all five boards). It is fitted by hand
+\textbf{after} the handedness check 1.1.6a, on the side that
+check says, housing opening toward the recessed rear edge,
+seated flat, pin 1 (+12 V) in the square pad} & ✓ \\
+\textcolor[HTML]{0040A0}{1.1.6a} &
+\textcolor[HTML]{B00000}{\textbf{J2 handedness check ---
+before 1.2, before anything is powered.} Procedure below
+this table. Record which side J2 ended up on and whether the
+first try passed.} & record \\
+1.1.7 & Solder side: no bridges, especially across the DIP
+rows; after 1.1.6a, across the J2 pins. No flux balls & ✓ \\
+1.1.8 & Fingers: gold, bevelled, \textbf{no solder or flux
+on any finger}, no lifted finger & ✓ \\
+1.1.9 & Board thickness at the fingers (calipers):
+1.37--1.78 mm (3M spec), expect 1.6 & record \\
+1.1.10 & Fit test: push a \textbf{bare} 3463 connector (not
+on a live cable) onto the tab. It seats fully, and the key
+(if fitted) goes into the slot between pins 4 and 6. Remove
+it & ✓ \\
+1.1.11 & Fit test (after 1.1.6a): the power plug latches
+into J2 and only goes in one way & ✓ \\
+1.1.12 & \textbf{Record the three ASSUMED dimensions} while
+you have calipers out: tab edge to corner (5.08 assumed),
+key-plug width (0.91), J2 pin drill (2.1) --- see
+\texttt{docs/MECHANICAL.md} & record \\
+\end{longtable}
+
+\hypertarget{a-j2-handedness-check-do-this-before-1.2-and-before-any-board-is-powered}{%
+\subsubsection{1.1.6a J2 handedness check --- do this before
+1.2 and before any board is
+powered}\label{a-j2-handedness-check-do-this-before-1.2-and-before-any-board-is-powered}}
+
+\textcolor[HTML]{0040A0}{\textbf{Why.} The SA400 pinout
+fixes which \emph{plug} pin carries +12 V, and the keyed
+plug fixes plug pin 1 ↔ header pin 1. Neither fixes which
+\textbf{end of the footprint} the header's pin 1 lands on:
+that depends on how the header itself is built, and nobody
+has verified it on a real part. Moving a header to the other
+side of the board mirrors its pins, so the same header can
+be right on one side and wrong on the other. On the 0.2.3
+boards the J2 pads are on the solder side with the square
+(+12 V) pad at the Q1 end. See \texttt{docs/ASSEMBLY.md}
+§Polarity.}
+
+\textcolor[HTML]{B00000}{If the mapping is wrong and the
+board is powered, +12 V goes into the +5 V input (fault F2,
+§0.7): F1 trips, D11 may fail. So: no power until this check
+passes.}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0244}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.6098}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3659}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Step
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textcolor[HTML]{0040A0}{a} &
+\textcolor[HTML]{0040A0}{Nothing powered. Push the header
+(TE 350211-1 vertical, or 1-641737-1 right-angle) into its
+four holes from the \textbf{solder side} as drawn, pin 1 of
+the header toward the square pad, housing opening toward the
+recessed rear edge. \textbf{Do not solder.} Hold it square
+with a finger or a clip.} & \textcolor[HTML]{0040A0}{seats
+fully; all four pins through} \\
+\textcolor[HTML]{0040A0}{b} & \textcolor[HTML]{0040A0}{Fit
+the drive power plug (the pigtail of Appendix D.2,
+\textbf{not connected to any supply}). It latches one way
+only.} & \textcolor[HTML]{0040A0}{latches} \\
+\textcolor[HTML]{0040A0}{c} & \textcolor[HTML]{0040A0}{DMM
+in continuity / ohms: \textbf{yellow wire ↔ the pad printed
+``+12V''} (the square pad, component-side label \texttt{1},
+solder-side label \texttt{1\ +12V}).} &
+\textcolor[HTML]{0040A0}{\textless{} 1 Ω} \\
+\textcolor[HTML]{0040A0}{d} & \textcolor[HTML]{0040A0}{Then
+\textbf{red wire ↔ ``+5V'' pad}, and each \textbf{black ↔ an
+RTN pad}. Also yellow ↔ ``+5V'' pad: must be \textbf{OL}.} &
+\textcolor[HTML]{0040A0}{red \textless{} 1 Ω to +5V; blacks
+\textless{} 1 Ω to RTN; yellow to +5V = OL} \\
+\textcolor[HTML]{0040A0}{\textbf{Pass}} &
+\textcolor[HTML]{0040A0}{c and d as expected: unplug,
+\textbf{solder the header on the solder side} as drawn,
+refit the plug, repeat c and d once on the soldered joint.}
+& \textcolor[HTML]{0040A0}{record ``solder side, pass''} \\
+\textcolor[HTML]{0040A0}{\textbf{Fail}} &
+\textcolor[HTML]{B00000}{Yellow lands on ``+5V'' (red on
+``+12V''): \textbf{do not solder.} Pull the header out and
+push it in from the \textbf{component side} instead (housing
+opening still toward the rear edge). Repeat c and d; yellow
+must now land on ``+12V''. Solder it there.}
+\textcolor[HTML]{0040A0}{Record ``component side''. This
+result is what the design session needs for v0.2.4: tell it,
+or open an issue in the repo (\texttt{J2\_PIN1\_X} /
+\texttt{J2\_PIN\_DIR} in \texttt{gen/config.py}).} &
+\textcolor[HTML]{0040A0}{record ``component side, first try
+failed''} \\
+\textcolor[HTML]{0040A0}{e} & \textcolor[HTML]{0040A0}{After
+soldering, on every board: 1.1.7 (no bridges across the J2
+pins) and then 1.2.} & --- \\
+\end{longtable}
+
+\textcolor[HTML]{0040A0}{Do the check on board 1 with the
+first header; boards 2--5 get the same header part fitted
+the same way, but still get steps c and d before 1.2 (a
+header from a different batch can differ).}
+
+\hypertarget{power-connector-no-shorts-between-rails}{%
+\subsubsection{1.2 Power connector --- no shorts between
+rails}\label{power-connector-no-shorts-between-rails}}
+
+DMM in ohms unless stated. ``OL'' = open / over-range.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+From (red)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+To (black)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Proves
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1.2.1 & J2-1 (+12) & J2-4 (+5) & \textbf{OL}, then try the
+leads the other way: \textbf{OL} & 12 V can never reach the
+5 V rail through the board \\
+1.2.2 & J2-2 & J2-3 & \textless{} 1 Ω & Both returns are
+tied together \\
+1.2.3 & J2-3 & J1-9 (any GND finger) & \textless{} 1 Ω &
+Supply ground = bus ground \\
+1.2.4 & J2-4 & J2-3 (GND) & \textgreater{} 200 Ω and
+settling (not a dead short) & No short across the +5 V
+input \\
+1.2.5 & J2-1 & J2-3 & \textgreater{} 2 kΩ or OL & No short
+across the +12 V input \\
+1.2.6 & J2-4 & F1 far lead / Q1 pin 2 & \textless{} 2 Ω
+(cold PTC) & F1 is in circuit and intact \\
+1.2.7 & Q1 pin 1 (gate) & GND & \textless{} 1 Ω & Gate tied
+to ground as designed \\
+\end{longtable}
+
+\hypertarget{reverse-polarity-switch-q1-orientation-diode-mode}{%
+\subsubsection{1.3 Reverse-polarity switch (Q1) orientation
+--- diode
+mode}\label{reverse-polarity-switch-q1-orientation-diode-mode}}
+
+\textcolor[HTML]{0040A0}{Diode mode: see 1.0. The meter
+supplies the volt or so needed; the board is unpowered.
+Readings are the forward drop of a junction at the meter's
+test current.}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Red lead
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Black lead
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Proves
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1.3.1 & Q1 pin 2 (drain) & Q1 pin 3 (source / rail) &
+0.4--0.7 V & Body diode points from input to rail, so Q1 is
+fitted the right way round \\
+1.3.2 & Q1 pin 3 & Q1 pin 2 & OL (may start low and climb
+while C4 charges) & Reversed supply will be blocked \\
+1.3.3 & J2-4 & U1-14 (+5V rail) & 0.4--0.7 V & Whole input
+path F1 → Q1 → rail is in one piece \\
+1.3.4 & GND & U1-14 & 0.4--0.8 V & Normal: D11 and the IC
+substrate diodes. \textbf{≈ 0 V = short on the rail} \\
+\end{longtable}
+
+If 1.3.1 reads OL and 1.3.2 reads 0.5 V, Q1 is in backwards.
+\textbf{Stop.}
+
+\hypertarget{bus-fingers-the-board-touches-only-what-it-should}{%
+\subsubsection{1.4 Bus fingers --- the board touches only
+what it
+should}\label{bus-fingers-the-board-touches-only-what-it-should}}
+
+This is the core ``cannot hurt the EI'' check with no power
+applied.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Test
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1.4.1 & Each of the \textbf{14 no-connect fingers} (1, 33,
+2, 4, 8, 16, 18, 20, 22, 26, 28, 30, 32, 34) to GND (J2-3) &
+\textbf{OL} \\
+1.4.2 & The same 14 fingers to the +5V rail (U1-14) &
+\textbf{OL} \\
+1.4.3 & Each of the \textbf{15 GND fingers} to J2-3 &
+\textless{} 1 Ω \\
+1.4.4 & Each monitored finger to its U1 input (table 0.4,
+e.g.~J1-10 → U1-1) & \textbf{447--494 Ω} (470 Ω ±5 \%) \\
+1.4.5 & Each monitored finger to the +5V rail, red lead on
+the finger & \textbf{9.9--11.0 kΩ} (470 Ω + 10 kΩ) \\
+1.4.6 & Each monitored finger to GND & \textgreater{} 10 kΩ,
+\textbf{never \textless{} 1 kΩ} \\
+1.4.7 & Adjacent signal fingers to each other: 10↔12, 12↔14,
+4↔6, 6↔8, 22↔24, 24↔26 & ≈ 21 kΩ between two monitored
+fingers (each one's 10.47 k to the rail), \textbf{OL} when
+one of the pair is a no-connect \\
+1.4.8 & Each monitored finger and J2-1 (+12) & \textbf{OL}
+--- 12 V has no path to the bus \\
+\end{longtable}
+
+\hypertarget{leds-in-circuit-diode-mode}{%
+\subsubsection{1.5 LEDs in circuit --- diode
+mode}\label{leds-in-circuit-diode-mode}}
+
+\textcolor[HTML]{0040A0}{Diode mode again (1.0); the glow
+comes from the meter's ≈ 1 mA.}
+
+Red lead on the anode (round pad), black lead on the cathode
+(square pad). Most DMMs light a red or yellow LED faintly.
+Some can't light green.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+LED
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1.5.1 & D1--D4, D12, D13 & 1.5--2.1 V, faint glow \\
+1.5.2 & D5--D8 & 1.7--2.4 V or OL (meter can't reach a
+green's Vf); faint glow if it can \\
+1.5.3 & Each LED reversed & OL or a much higher reading
+(other in-circuit paths) \\
+\end{longtable}
+
+Phase 1 done → record, go to Phase 2.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{phase-2-bench-power-not-on-the-ei}{%
+\subsection{Phase 2 --- Bench power, not on the
+EI}\label{phase-2-bench-power-not-on-the-ei}}
+
+Board on the bench, J2 fed from the bench supply through the
+pigtail. J1 is either empty or plugged into the \textbf{jig
+only}. The EI, drives and cable are nowhere near it.
+
+Expected currents (as built):
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Condition
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expected +5 V current
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Idle (no line asserted) & \textbf{≈ 25--45 mA} (three LS ICs
++ D13 at ≈ 6 mA) --- accept 15--60 mA, but boards should
+agree within ±20 \% \\
+Each asserted line (jig pull-ups off) & + ≈ 0.48 mA (its
+10.47 k pull-up path) + any LED it lights \\
+One drive selected & + ≈ 5.5--6 mA (red) \\
+Selected and writing & + another ≈ 5.5 mA (green) \\
++12 V input & ≈ 4.5 mA (D12 only) \\
+\end{longtable}
+
+\hypertarget{first-power-up-5-v-only-current-limited}{%
+\subsubsection{2.1 First power-up --- +5 V only,
+current-limited}\label{first-power-up-5-v-only-current-limited}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Supply output \textbf{off}. Set it to \textbf{0 V, 100 mA
+  limit}. Connect J2-4 (+) and J2-3 (−). Leave J2-1 open.
+  Nothing on J1.
+\item
+  Turn the output on and \textbf{raise slowly} to 5.00 V,
+  watching the current.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Over 60 mA at any point, or the supply drops into
+    current limit → \textbf{stop}: short, or a reversed IC.
+  \end{itemize}
+\item
+  At 5.00 V record:
+\end{enumerate}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Measure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.1.1 & Supply current & 15--60 mA (record exactly --- this
+is the board's fingerprint) \\
+2.1.2 & D13 ``5V'' & lit \\
+2.1.3 & D1--D8, D12 & \textbf{all off} (no line asserted;
+D12 has no +12 V) \\
+2.1.4 & Touch test after 1 min: U1--U3, Q1, D11, F1 & none
+warm \\
+\end{longtable}
+
+\hypertarget{rail-voltages}{%
+\subsubsection{2.2 Rail voltages}\label{rail-voltages}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Measure (black on GND)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.2.1 & J2-4 & 5.00 V (set) \\
+2.2.2 & +5V rail at U1-14, U2-14, U3-14 & within 0.05 V of
+J2-4 \\
+2.2.3 & U1-7, U2-7, U3-7 & 0.00 V \\
+\end{longtable}
+
+\hypertarget{q1-voltage-drop}{%
+\subsubsection{2.3 Q1 voltage drop}\label{q1-voltage-drop}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Measure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+If not
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.3.1 & DC volts, red J2-4, black U1-14 &
+\textbf{\textless{} 0.05 V} & 0.4--0.7 V means Q1's channel
+is not turning on and the current is going through its body
+diode. The rail would then sit around 4.4 V, below the 74LS
+minimum of 4.75 V. Check Q1 orientation and part; the
+IRF4905 should be fully on at −5 V V\_GS for 35 mA \\
+\end{longtable}
+
+\hypertarget{supply-tolerance-and-clamp-leakage}{%
+\subsubsection{2.4 Supply tolerance and clamp
+leakage}\label{supply-tolerance-and-clamp-leakage}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Set J2-4 to
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Measure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.4.1 & 4.75 V & current; then repeat 2.5 for one drive &
+LEDs still work \\
+2.4.2 & 5.25 V & current & No more than \textbf{5 mA} above
+the 5.00 V reading. A bigger rise means D11 (5.32 V minimum
+knee) is starting to conduct; record it \\
+2.4.3 & back to 5.00 V & --- & --- \\
+\end{longtable}
+
+\hypertarget{v-indicator}{%
+\subsubsection{2.5 +12 V indicator}\label{v-indicator}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Second output (or the same supply in a second step): 12.0
+  V, \textbf{50 mA limit}, J2-1 (+) / J2-2 (−).
+\end{enumerate}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Measure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.5.1 & +12 V current & 3.5--5.5 mA \\
+2.5.2 & D12 ``12V'' & lit \\
+2.5.3 & +5V rail (U1-14) & unchanged from 2.2 --- 12 V does
+not leak onto the logic \\
+2.5.4 & Every monitored finger (6, 10, 12, 14, 24), open
+circuit & ≈ +5 V, \textbf{never above the rail} \\
+\end{longtable}
+
+\hypertarget{bus-isolation-and-logic-with-the-jig}{%
+\subsubsection{2.6 Bus isolation and logic --- with the
+jig}\label{bus-isolation-and-logic-with-the-jig}}
+
+The monitor stays at 5.00 V / 100 mA limit. Plug the
+\textbf{jig} (pull-ups \textbf{off}, all switches open) onto
+J1 with the board's supply \textbf{off}, then power up.
+
+\textbf{2.6.A --- What the board puts on the bus (the ``will
+it short the EI or a drive'' numbers)}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Test
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Proves
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.6.1 & DC volts, each monitored line to GND, all switches
+open & 4.8--5.25 V (the rail through 10.47 k) & The board
+only ever \emph{pulls up weakly}; it never drives a line \\
+2.6.2 & DC \textbf{mA} meter from each monitored line to GND
+(meter in place of the switch) & \textbf{0.45--0.55 mA} &
+The \textbf{most} current the board can push into a bus line
+in normal operation: \textless{} 2 \% of the 31 mA the
+terminator already makes the EI sink \\
+2.6.3 & DC volts, each \textbf{no-connect} finger to GND
+(probe the ribbon conductor) & 0.00 V (floating) & The board
+leaves the other 12 signals alone \\
+2.6.4 & Board supply current with all five switches closed
+(lines held low), no LEDs counted & idle + 5 × 0.48 ≈ idle +
+2.4 mA (plus the LEDs that light) & Matches the pull-up
+model \\
+\end{longtable}
+
+\textbf{2.6.B --- Logic truth table} (jig pull-ups off, then
+repeat with them \textbf{on})
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Switches closed
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect lit
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Must stay dark
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.6.5 & none & D13 & D1--D8 \\
+2.6.6 & DS1 & D1 & all other drive LEDs \\
+2.6.7 & DS2 & D2 & '' \\
+2.6.8 & DS3 & D3 & '' \\
+2.6.9 & DS4 & D4 & '' \\
+2.6.10 & WG only & none & D1--D8 (write gate with no drive
+selected lights nothing) \\
+2.6.11 & DS1 + WG & D1 + D5 & others \\
+2.6.12 & DS2 + WG & D2 + D6 & others \\
+2.6.13 & DS3 + WG & D3 + D7 & others \\
+2.6.14 & DS4 + WG & D4 + D8 & others \\
+2.6.15 & DS1 + DS3 (two selects, not legal on a real bus) &
+D1 + D3 & --- shows the channels are independent \\
+\end{longtable}
+
+\textbf{2.6.C --- Levels} (one channel, DS1 + WG closed, jig
+pull-ups \textbf{on})
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Measure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.6.16 & J1-10 (finger) & ≈ 0 V (switch) \\
+2.6.17 & U1-1 (receiver input, after R17) &
+\textcolor[HTML]{0040A0}{\textbf{\textless{} 0.45 V} (1.2:
+was 0.4 V. A hard ground on the jig gives ≈ 0.31 V typical,
+0.40 V worst case: F1)} \\
+2.6.18 & U1-2 (DS1, active-high) & \textgreater{} 2.7 V \\
+2.6.19 & U3-2 (red cathode) / U2-3 (green cathode) &
+\textless{} 0.5 V each \\
+2.6.20 & Voltage across R1 (red D1 resistor) & 2.5--2.9 V →
+≈ 5.3--6.2 mA \\
+2.6.21 & Switch open again: U1-1 & \textgreater{} 4.5 V;
+U1-2 \textless{} 0.5 V; LEDs off \\
+\end{longtable}
+
+If a channel fails, follow it down that row of table 0.4:
+finger → series R → U1 input → U1 output → U3/U2 output →
+LED. The first stage that reads wrong is the fault.
+
+\textbf{2.6.D --- Unpowered board on a powered bus} (EI on,
+monitor off --- the reverse case)
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Test
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.6.22 & Board supply \textbf{disconnected} from J2. Jig
+pull-ups \textbf{on} (+5V\_JIG = 5.0 V). mA meter in series
+with one 150 Ω pull-up → line & Line current changes by
+\textbf{\textless{} 0.6 mA} between the board plugged in and
+the board off the jig \\
+2.6.23 & With all five pull-ups on, measure the dead board's
++5V rail (U1-14) & Record. Expect well under 2 V; D13 may
+glow very faintly. The back-feed is limited by 470 Ω + 10 kΩ
+per line \\
+2.6.24 & Line high voltage at the jig with the dead board
+plugged in & ≥ 4.9 V (the board doesn't drag the bus down
+when it's unpowered) \\
+\end{longtable}
+
+\hypertarget{protection-tests-board-1-only}{%
+\subsubsection{\texorpdfstring{2.7 Protection tests ---
+\textbf{board 1
+only}}{2.7 Protection tests --- board 1 only}}\label{protection-tests-board-1-only}}
+
+These deliberately apply the faults in
+\texttt{THEORY\_OF\_OPERATION.md} §4.3. \textbf{Pull U1, U2
+and U3 from their sockets first} (note the orientation) so
+an unexpected result can only cost a cheap part. Jig
+disconnected.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Fault applied
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+How
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Pass
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.7.1 & \textbf{Reversed +5 V} & 5.0 V, 50 mA limit,
+\textbf{+ on J2-3, − on J2-4} & Current \textless{} 1 mA;
+rail (U1 socket pin 14 to GND) ≈ 0 V; D13 dark & Q1
+blocks \\
+2.7.2 & \textbf{Reversed +12 V} & 12 V, 50 mA limit, + on
+J2-2, − on J2-1 & Current ≈ 3 mA (D12 in reverse breakdown
+through R19); D12 dark & Nothing else conducts.
+\textcolor[HTML]{B00000}{Puts D12 ≈ 2 V past its reverse
+rating (F3). Likely survives; skip if you'd rather not.} \\
+2.7.3 & \textbf{Overvoltage on +5 V} (clamp) & Normal
+polarity, \textbf{300 mA limit}. Raise J2-4 from 5.0 V in
+0.2 V steps to 7.0 V or until the supply hits its limit. At
+each step record the input V, the current and the rail V &
+Rail follows the input up to D11's knee (≈ 5.3--5.9 V);
+after that the current climbs steeply while the rail rises
+slowly & Rail \textbf{\textless{} 6.5 V} at 300 mA (74LS
+absolute max is 7.0 V). Don't hold more than 30 s at 300
+mA \\
+2.7.4 & \emph{Optional} --- \textbf{12 V on the +5 V pin}
+(miswired cable) & Normal polarity, \textbf{12 V, 2 A
+limit}, ICs still out. Watch the current; switch off after
+10 s regardless & \textcolor[HTML]{B00000}{Current goes
+straight to the supply's 2 A limit (the cold PTC is ≈ 0.5 Ω;
+it does not limit anything), D11 dissipates ≈ 12 W until F1
+trips, well under a second; then the current falls to tens
+of mA. Rail stays \textless{} 7 V throughout.} Let it cool 5
+min, then repeat 2.1 → normal & F1 trips; nothing smokes.
+\textcolor[HTML]{B00000}{D11 may fail short (F2): then the
+rail reads ≈ 0 V and D11 must be replaced before 2.1
+passes.} \\
+\end{longtable}
+
+\textcolor[HTML]{B00000}{Skip 2.7.4 unless you are willing
+to lose D11. From a 2 A bench limit it will probably survive
+the pulse; from a PC supply (tens of amps) it would not.
+Steps 2.7.1--2.7.3 already show the clamp and the reverse
+block work.}
+
+\hypertarget{worst-case-fault-current-into-a-bus-line-board-1-only}{%
+\subsubsection{\texorpdfstring{2.8 Worst-case fault current
+into a bus line --- \textbf{board 1
+only}}{2.8 Worst-case fault current into a bus line --- board 1 only}}\label{worst-case-fault-current-into-a-bus-line-board-1-only}}
+
+This checks the worst case the 470 Ω series resistors are
+there for: a dead receiver shorting a bus line to the rail.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  ICs \textbf{out}. Board at 5.00 V, 100 mA limit.
+\item
+  Jumper \textbf{U1 socket pin 1 (DS1\_in) to U1 socket pin
+  14 (+5 V)}. This simulates a receiver input welded to the
+  rail.
+\item
+  mA meter from \textbf{J1-10} (finger) to \textbf{GND}.
+\end{enumerate}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Pass
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2.8.1 & ≈ 10.6 mA (5.0 V / 470 Ω) & \textbf{≤ 12 mA} ---
+added to the terminator's 31 mA, that's 43 mA, inside the
+7438's 48 mA rating \\
+\end{longtable}
+
+Repeat for one more channel (e.g.~U1 pin 11 / J1-24). Remove
+the jumper, refit the ICs (check the notches), and re-run
+2.1 and 2.6.B quickly.
+
+Phase 2 done → record, go to Phase 3 (board 1 first).
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{phase-3-on-the-expansion-interface}{%
+\subsection{Phase 3 --- On the Expansion
+Interface}\label{phase-3-on-the-expansion-interface}}
+
+\hypertarget{before-starting}{%
+\subsubsection{3.0 Before starting}\label{before-starting}}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  Board has passed Phase 1 and Phase 2.
+\item[$\square$]
+  \textbf{Baseline without the monitor:} Model I + EI +
+  drives boot DOS, \texttt{DIR} each drive, read a few
+  files. Write down anything that already misbehaves, so it
+  isn't blamed on the monitor later.
+\item[$\square$]
+  \textbf{Cable.} Use the six-connector cable from
+  \texttt{docs/CABLE.md} (drawing: Appendix E), or a
+  straight-through cable with a spare connector. \textbf{On
+  a Radio Shack ``pulled-pin'' cable} each drive connector
+  carries only one drive-select line, so the monitor would
+  only ever see that one drive. Put it on a connector with
+  all 34 contacts.
+\item[$\square$]
+  Cable continuity: each connector, pin N to pin N, and no
+  adjacent-pin shorts (DMM, 2 minutes).
+\item[$\square$]
+  Red stripe = pin 1 on every connector. On the monitor, pin
+  1 is the solder-side finger directly under pin 2, at the
+  \textbf{board-corner end of the tab, away from J2}.
+  Confirm against the silk pin numbers before mating.
+\item[$\square$]
+  The terminated drive is at the \textbf{far end} of the
+  cable. The monitor adds no terminator.
+\end{itemize}
+
+\hypertarget{ground-and-supply-check}{%
+\subsubsection{3.1 Ground and supply
+check}\label{ground-and-supply-check}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Model I + EI \textbf{on}, cable connected to the EI but
+  \textbf{not} to the monitor. Monitor supply on but not
+  connected to the monitor.
+\item
+  DC volts between the \textbf{bench supply (−)} and the
+  \textbf{EI chassis / a GND pin}: \textless{} 0.1 V. AC
+  volts: \textless{} 0.1 V.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    A higher reading means the bench supply or the EI is
+    floating at a different potential. Connecting it through
+    the cable's ground would push current through the
+    ribbon. \textbf{Fix first} (bring both to the same mains
+    ground, or use a floating supply).
+  \end{itemize}
+\item
+  Everything \textbf{off}.
+\end{enumerate}
+
+\hypertarget{stage-a-ei-monitor-no-drives}{%
+\subsubsection{3.2 Stage A --- EI + monitor, no
+drives}\label{stage-a-ei-monitor-no-drives}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Everything off. Plug the monitor onto the DIAG connector
+  (stripe to pin 1). \textbf{No drives connected.}
+\item
+  Monitor supply: 5.00 V, 100 mA limit (+12 V optional).
+  Power on → idle current same as 2.1.1 (± 2 mA).
+\item
+  Power on the Model I / EI.
+\end{enumerate}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Observe
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+3.2.1 & Monitor current as the EI powers up & stays within
+idle + 15 mA, no spike to the limit \\
+3.2.2 & At power-on, with no drive fitted & The ROM tries to
+boot drive :0, so \textbf{D1 should light} (DS1 asserted).
+Hold BREAK (or reset with BREAK) to get to BASIC \\
+3.2.3 & Run the select-cycling program below & D1 → D2 → D3
+→ D4 in turn, about 1 s each; \textbf{no green ever} \\
+3.2.4 & DMM on J1-10 side of R17 (or scope) while :0
+selected & ≤ 0.4 V asserted, ≈ 5 V released \\
+\textcolor[HTML]{0040A0}{3.2.5 (1.2, F1)} &
+\textcolor[HTML]{0040A0}{DMM on \textbf{U1-1} (the DS1
+receiver input, after R17) while :0 is selected: hold BREAK
+at power-on, or the cycling program} &
+\textcolor[HTML]{0040A0}{Record. With no drives there is no
+terminator, so the EI driver sinks almost nothing and this
+reads low, ≈ 0.3--0.4 V. The number that matters is
+3.3.7.} \\
+\end{longtable}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{10 REM CYCLE DRIVE SELECTS :0{-}:3, 37E1H = 14305 (MODEL I DRIVE SELECT LATCH)}
+\NormalTok{20 FOR D = 0 TO 3}
+\NormalTok{30 V = 2 \^{} D}
+\NormalTok{40 FOR T = 1 TO 150 : POKE 14305, V : NEXT T}
+\NormalTok{50 NEXT D}
+\NormalTok{60 GOTO 20}
+\end{Highlighting}
+\end{Shaded}
+
+The EI's select latch is cleared by the motor-on timeout
+after a few seconds, which is why line 40 keeps re-writing
+it. Without drives there's no terminator, so the monitor's
+10 k pull-ups are the only thing pulling the lines high.
+That's fine for this test.
+
+\hypertarget{stage-b-ei-monitor-drives}{%
+\subsubsection{3.3 Stage B --- EI + monitor +
+drives}\label{stage-b-ei-monitor-drives}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Everything off. Connect the drives (terminated drive at
+  the end). Monitor on DIAG.
+\item
+  Power order: monitor supply → drives → Model I / EI.
+\end{enumerate}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Test
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+3.3.1 & Boot DOS from :0 & Boots exactly as in the baseline.
+D1 lights whenever drive :0's own activity LED does \\
+3.3.2 & \texttt{DIR} on each drive present & Red LED for
+that drive only, in step with the drive's own LED \\
+3.3.3 & Run the BASIC select-cycling program (from Disk
+BASIC) & As 3.2.3; the drive motors start, which is
+normal \\
+3.3.4 & \textbf{Write test} --- scratch disk in :1. Save a
+file or format it (syntax depends on the DOS) & D2 red
+throughout, \textbf{D6 green only while writing}. No green
+on any other drive \\
+3.3.5 & Read back / \texttt{DIR} the scratch disk; copy a
+file :0 → :1 and compare & No errors, same as the
+baseline \\
+3.3.6 & \emph{(scope, optional)} DS1 at the DIAG connector,
+monitor plugged in vs removed (everything off to swap) & Low
+level differs by \textless{} 50 mV; rise and fall times look
+the same \\
+\textcolor[HTML]{0040A0}{3.3.7 (1.2, F1)} &
+\textcolor[HTML]{0040A0}{\textbf{Receiver margin.} With the
+drives connected (terminated bus), DMM on \textbf{U1-1}
+while :0 is selected (repeated \texttt{DIR\ :0}, or the
+cycling program). Also U1-3 / U1-5 / U1-9 for :1 / :2 / :3
+if those drives are fitted. Note the finger voltage (J1-10)
+alongside for comparison.} &
+\textcolor[HTML]{0040A0}{\textbf{≤ 0.50 V = clean} (below
+the 74LS14's minimum VT−). \textbf{0.50--0.80 V = works on
+typical margin}: fit a 74HCT14 in U1 (and optionally 47--100
+k for R9--R13), re-measure; each change should drop the
+reading by ≈ 0.2 V.}
+\textcolor[HTML]{B00000}{\textbf{\textgreater{} 0.80 V = a
+select can be missed.} Do not rely on the board until U1 is
+swapped and the reading is ≤ 0.8 V.} \\
+\end{longtable}
+
+\hypertarget{power-order-robustness}{%
+\subsubsection{3.4 Power-order
+robustness}\label{power-order-robustness}}
+
+Run a read loop (e.g.~repeated \texttt{DIR\ :0}, or a BASIC
+program that LOADs a file over and over) and,
+\textbf{without touching the card edge}:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Action
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+3.4.1 & Unplug the monitor's \textbf{J2} (power) while the
+loop runs & Loop continues with no errors; monitor LEDs go
+dark \\
+3.4.2 & Plug J2 back in & Loop continues; LEDs resume \\
+3.4.3 & Monitor powered, Model I / EI and drives off &
+Monitor current back to idle; no LEDs except D13 (and
+D12) \\
+3.4.4 & Monitor unpowered, power the system on and boot &
+Boots normally (an unpowered monitor doesn't load the
+bus) \\
+\end{longtable}
+
+\hypertarget{soak}{%
+\subsubsection{3.5 Soak}\label{soak}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+\#
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Test
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Expect
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+3.5.1 & 1 hour of mixed read/write on a scratch disk & No
+disk errors beyond the baseline \\
+3.5.2 & Heat check at the end: U1--U3, Q1, D11, F1, R1--R8 &
+All barely warm (\textless{} 45 °C). \textbf{D11 warm} means
+the rail is above its knee: check the supply voltage \\
+3.5.3 & Monitor current at the end & Same as at the start (±
+2 mA) \\
+\end{longtable}
+
+\hypertarget{final-power-source}{%
+\subsubsection{3.6 Final power
+source}\label{final-power-source}}
+
+If the monitor will normally be powered from something other
+than the bench supply (a PC PSU Molex lead, a drive's
+supply), repeat \textbf{2.1--2.2} on that source with a
+meter in series (expect 4.75--5.25 V at J2-4), then
+\textbf{3.3.1--3.3.4} briefly.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{if-something-fails}{%
+\subsection{4. If something
+fails}\label{if-something-fails}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Symptom
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Most likely
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Look at
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Current at the limit on first power-up & Reversed IC, solder
+bridge, C4 reversed & 1.1.1, 1.1.3, 1.3.4 \\
+Rail ≈ 0.5 V below J2-4 & Q1 conducting only through its
+body diode & 2.3, Q1 orientation / part \\
+All LEDs dead, D13 lit & U1 missing/reversed, or the fingers
+not making contact & U1-14 voltage, 2.6.C \\
+One red never lights & That row of table 0.4 & Series R,
+pull-up, U1 gate, U3 gate, LED polarity \\
+Red lights but its green never does & That U2 gate, its LED,
+or WG path (R14, U1-11/10) & 2.6.C \\
+Green lights with its red even when not writing & WG stuck
+active: U1-11 shorted to GND, or U1 gate 5 faulty & U1-11
+should be \textgreater{} 4.5 V with WG released; U1-10
+\textless{} 0.5 V \\
+Green never lights on any drive & WG path open: R14, or
+U1-11/U1-10 & 2.6.C on the WG row \\
+LEDs flicker with nothing asserted & Pull-up open, so a
+floating LS14 input & R9--R13 \\
+\textcolor[HTML]{0040A0}{A drive's red is erratic or misses
+short accesses that the drive's own LED shows} &
+\textcolor[HTML]{0040A0}{Receiver margin (F1): U1 input node
+too high} & \textcolor[HTML]{0040A0}{3.3.7; 74HCT14 in
+U1} \\
+Disk errors with the monitor fitted but not without & Cable
+(the sixth connector), terminator position, or a monitored
+line loaded & 3.0 cable checks, 2.6.1--2.6.2 on that board,
+3.3.6 \\
+\end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\clearpage\renewcommand{\arraystretch}{2.3}
+\hypertarget{record-sheets}{%
+\subsection{5. Record sheets}\label{record-sheets}}
+
+Tick ✓ or write the reading in the box. One column per
+board.
+
+\hypertarget{phase-1}{%
+\subsubsection{5.1 Phase 1}\label{phase-1}}
+
+\begin{longtable}[]{|>{\raggedright\arraybackslash}p{0.40\linewidth}|*{5}{>{\centering\arraybackslash}p{0.085\linewidth}|}}
+\hline
+\textbf{Step} & \textbf{B1} & \textbf{B2} & \textbf{B3} & \textbf{B4} & \textbf{B5} \\
+\hline
+\endhead
+
+\endlastfoot
+1.1.1--1.1.8 visual & & & & & \\ \hline
+1.1.9 thickness (mm) & & & & & \\ \hline
+1.1.10--1.1.11 fit & & & & & \\ \hline
+\textcolor[HTML]{0040A0}{1.1.6a J2: yellow→+12V first try?
+side fitted} & & & & & \\ \hline
+1.1.12 tab-corner / key / J2 drill (mm) & & & & & \\ \hline
+1.2.1 +12↔+5 OL & & & & & \\ \hline
+1.2.4 J2-4↔GND (Ω) & & & & & \\ \hline
+1.2.6 F1 (Ω) & & & & & \\ \hline
+1.3.1 Q1 body diode (V) & & & & & \\ \hline
+1.3.4 GND↔rail diode (V) & & & & & \\ \hline
+1.4.1--1.4.2 no-connect fingers OL & & & & & \\ \hline
+1.4.3 GND fingers & & & & & \\ \hline
+1.4.4 series R (Ω) 10/12/14/6/24 & & & & & \\ \hline
+1.4.5 finger→rail (kΩ) 10/12/14/6/24 & & & & & \\ \hline
+1.4.8 fingers↔+12 OL & & & & & \\ \hline
+1.5 LEDs & & & & & \\ \hline
+\end{longtable}
+
+\hypertarget{phase-2}{%
+\subsubsection{5.2 Phase 2}\label{phase-2}}
+
+\begin{longtable}[]{|>{\raggedright\arraybackslash}p{0.40\linewidth}|*{5}{>{\centering\arraybackslash}p{0.085\linewidth}|}}
+\hline
+\textbf{Step} & \textbf{B1} & \textbf{B2} & \textbf{B3} & \textbf{B4} & \textbf{B5} \\
+\hline
+\endhead
+
+\endlastfoot
+2.1.1 idle current (mA) & & & & & \\ \hline
+2.2.2 rail (V) & & & & & \\ \hline
+2.3.1 Q1 drop (V) & & & & & \\ \hline
+2.4.1 works at 4.75 V & & & & & \\ \hline
+2.4.2 current at 5.25 V (mA) & & & & & \\ \hline
+2.5.1 +12 current (mA) & & & & & \\ \hline
+2.6.1 line open V (min/max) & & & & & \\ \hline
+2.6.2 line short mA (max) & & & & & \\ \hline
+2.6.5--2.6.15 truth table, pull-ups off & & & & & \\ \hline
+2.6.5--2.6.15 truth table, pull-ups on & & & & & \\ \hline
+2.6.20 LED resistor V & & & & & \\ \hline
+2.6.22 dead-board line current (mA) & & & & & \\ \hline
+2.6.23 back-fed rail (V) & & & & & \\ \hline
+2.7.1 reverse +5 (mA) & & --- & --- & --- & --- \\ \hline
+2.7.3 rail at 300 mA (V) & & --- & --- & --- & --- \\ \hline
+2.7.4 PTC trip (optional) & & --- & --- & --- & --- \\ \hline
+2.8.1 fault current (mA) & & --- & --- & --- & --- \\ \hline
+\end{longtable}
+
+\hypertarget{phase-3}{%
+\subsubsection{5.3 Phase 3}\label{phase-3}}
+
+\begin{longtable}[]{|>{\raggedright\arraybackslash}p{0.40\linewidth}|*{5}{>{\centering\arraybackslash}p{0.085\linewidth}|}}
+\hline
+\textbf{Step} & \textbf{B1} & \textbf{B2} & \textbf{B3} & \textbf{B4} & \textbf{B5} \\
+\hline
+\endhead
+
+\endlastfoot
+3.1 ground offset (V DC / AC) & & & & & \\ \hline
+3.2.1--3.2.4 EI only & & & & & \\ \hline
+\textcolor[HTML]{0040A0}{3.2.5 U1-1, no drives (V)} & & & &
+& \\ \hline
+3.3.1--3.3.5 with drives & & & & & \\ \hline
+\textcolor[HTML]{0040A0}{3.3.7 U1-1, with drives (V) →
+HCT14?} & & & & & \\ \hline
+3.3.6 scope delta (mV) & & & & & \\ \hline
+3.4.1--3.4.4 power order & & & & & \\ \hline
+3.5 soak / heat / current & & & & & \\ \hline
+3.6 final supply & & & & & \\ \hline
+\end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\renewcommand{\arraystretch}{1.25}
+\hypertarget{todo}{%
+\subsection{6. TODO}\label{todo}}
+
+\begin{itemize}
+\tightlist
+\item[$\square$]
+  \textcolor[HTML]{0040A0}{1.1.6a J2 handedness check on
+  board 1 → report the side to the design session (sets
+  v0.2.4 \texttt{J2\_PIN1\_X} / \texttt{J2\_PIN\_DIR})}
+\item[$\square$]
+  Build the bus-simulator jig (0.6)
+\item[$\square$]
+  Board 1: Phase 1 → Phase 2 (all, including 2.7/2.8) →
+  Phase 3
+\item[$\square$]
+  Boards 2--5: Phase 1 → Phase 2 (2.1--2.6) → Phase 3
+  (3.3.1--3.3.4)
+\item[$\square$]
+  \textcolor[HTML]{0040A0}{3.3.7 result → decide whether U1
+  becomes a 74HCT14 (F1); record which boards got it}
+\item[$\square$]
+  Feed the 1.1.12 measurements into \texttt{gen/config.py}
+  and close the ASSUMED items in \texttt{docs/MECHANICAL.md}
+\item[$\square$]
+  Bring \texttt{docs/BOM.md} and
+  \texttt{THEORY\_OF\_OPERATION.md} up to the r2 values
+  (table 0.3)
+\item[$\square$]
+  Results go into the v0.3 plan
+  (\texttt{docs/V0.3\_PLAN.md})
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\cleardoublepage
+\hypertarget{appendix-a-board-drawing}{%
+\subsection{Appendix A --- Board
+drawing}\label{appendix-a-board-drawing}}
+
+\hypertarget{a.1-populated-board-component-side-wireframe}{%
+\subsubsection{A.1 Populated board, component side
+(wireframe)}\label{a.1-populated-board-component-side-wireframe}}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth,height=0.84\textheight,keepaspectratio]{img/board_populated_v0.2.3.pdf}
+\caption{The v0.2.3 boards in hand, component side,
+wireframe (drawing frozen 2026-10-19 from the v0.2.3
+generator; \texttt{gen/render\_populated.py} now draws the
+current design, v0.2.4). Values are the as-built r2 BOM. J1
+fingers at the top, pin 2 at the right; the J2 pads (dashed)
+are on the solder side, square pad = pin 1 = +12 V at the Q1
+end; J2 itself is fitted by hand per 1.1.6a.}
+\end{figure}
+
+\cleardoublepage
+\hypertarget{a.2-legend-for-a.1}{%
+\subsubsection{A.2 Legend for
+A.1}\label{a.2-legend-for-a.1}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Ref
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Part (as built, r2 BOM)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Drawn as
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Job on the board
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Check when inspecting
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+U1 & 74LS14 hex Schmitt inverter, DIP-14, in socket & Solid
+rounded box with end notch, inside a dashed socket outline &
+Bus receivers for DS1--DS4 and WRITE GATE & Notch at left;
+pin 1 = square pad, bottom-left \\
+U2 & 74LS00 quad NAND, DIP-14, in socket & Same & Green
+LEDs: DSn AND WG & Same \\
+U3 & 74LS06 hex open-collector inverter, DIP-14, in socket &
+Same & Red LEDs: DSn & Same \\
+Q1 & IRF4905 P-channel MOSFET, TO-220, standing & Rectangle
+(body) + thin rectangle (metal tab), pins G D S &
+Reverse-polarity switch on +5 V & Gate in the square pad;
+tab toward the front edge \\
+F1 & PTC resettable fuse 0.5 A & Rounded bar & +5 V input
+fuse & --- \\
+D11 & 1N5339B 5.6 V 5 W Zener, DO-15, standing & Double
+circle (body + band) with the lead down to the anode & +5 V
+rail clamp & Band (cathode) on top, in the square pad \\
+C4 & 10 µF 16 V electrolytic & Circle with ``+'' and a line
+on the stripe side & Bulk +5 V & + lead in the square pad \\
+C1, C2, C3, C6 & 100 nF ceramic disc & Small rounded slot &
+Decoupling U1/U2/U3; rail entry (C6) & --- \\
+R14--R18 & 470 Ω ¼ W, standing & Circle (body) + line (lead)
+& Bus series resistors, finger → receiver (fault-current
+limit) & Value printed under the lead \\
+R9--R13 & 10 kΩ ¼ W, standing & Same, label rotated & Bus
+pull-ups on the receiver side & --- \\
+R1--R8 & 470 Ω ¼ W, standing & Same & Drive-LED series
+resistors (R1--R4 red, R5--R8 green) & --- \\
+R19 & 2.2 kΩ ¼ W & Same & +12 V indicator series & --- \\
+R21 & 470 Ω ¼ W & Same & +5 V indicator series & --- \\
+D1--D4 & Red 5 mm LED (R) & Circle with a flat; ``K'' at the
+flat & Drive 1--4 SELECTED & Flat / short lead = cathode =
+square pad \\
+D5--D8 & Green 5 mm LED (G) & Same & Drive 1--4 WRITE GATE &
+Same \\
+D12, D13 & Yellow 5 mm LED (Y) & Same & ``12V'' and ``5V''
+present & Same \\
+J1 & 34-contact card edge (gold fingers) & Rectangles on the
+tab; bold numbers = monitored lines 6/10/12/14/24 & Shugart
+bus & Even pins on top, odd under them; key slot between 4
+and 6 \\
+J2 & TE/AMP Mate-N-Lok 350211-1 (or 1-641737-1 right-angle)
+& \textbf{Dashed grey}: pads on the solder side;
+\textcolor[HTML]{0040A0}{not fitted by JLCPCB} & Power in: 1
++12 V, 2/3 RTN, 4 +5 V & Pin 1 = square pad;
+\textcolor[HTML]{0040A0}{side decided by 1.1.6a} \\
+H1--H4 & M3 mounting holes & Circle in a dashed ring &
+Standoffs & --- \\
+\end{longtable}
+
+Conventions: a \textbf{square pad} is pin 1, a cathode, or a
+capacitor's + lead. \textbf{Dashed} means a socket or a part
+on the solder side. Drive \emph{n} on the board is TRS-80
+drive \emph{:n−1}.
+
+\cleardoublepage
+\hypertarget{appendix-b-schematic}{%
+\subsection{Appendix B ---
+Schematic}\label{appendix-b-schematic}}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth,height=0.885\textheight,keepaspectratio]{img/schematic.pdf}
+\caption{Schematic, as built (r2 BOM), drawn from the
+netlist in \texttt{gen/design.py}
+(\texttt{pdf/schematic.tex}). Gate pin numbers are the
+DIP-14 pins used in the test steps. KiCad sheet:
+\texttt{output/sa400\_led\_monitor\_schematic.pdf} (A3).}
+\end{figure}
+
+\cleardoublepage
+\hypertarget{appendix-c-parts-list-as-built-jlcpcb-r2-bom}{%
+\subsection{Appendix C --- Parts list, as built (JLCPCB r2
+BOM)}\label{appendix-c-parts-list-as-built-jlcpcb-r2-bom}}
+
+\textcolor[HTML]{0040A0}{Values are what JLCPCB fitted.
+Where the design documents say something else, the design
+value is in the Notes column.}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0190}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0857}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.2286}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1619}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1714}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.0857}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.2476}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Qty
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ref
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Part
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Value / rating
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Package
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+LCSC
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Notes
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & U1 & TI SN74LS14N hex Schmitt-trigger inverter & --- &
+DIP-14, in socket U1A & C73064 & Bus receivers. Candidate
+for a 74HCT14 swap (finding F1, step 3.3.7) \\
+1 & U2 & TI SN74LS00N quad 2-input NAND & --- & DIP-14, in
+socket U2A & C181629 & Green LEDs: DSn AND WG \\
+1 & U3 & TI SN74LS06N hex inverter, open collector & --- &
+DIP-14, in socket U3A & C22384767 & Red LEDs: DSn \\
+3 & U1A, U2A, U3A & DIP-14 socket & --- & DIP-14 & C190815 &
+Under U1--U3 \\
+1 & Q1 & IRF4905PBF P-channel MOSFET & 55 V, 74 A, R\_DS(on)
+20 mΩ at V\_GS −10 V & TO-220 vertical, pins G-D-S & C2564 &
+Reverse-polarity switch. Design called for NDP6020P
+(logic-level); see step 2.3 \\
+1 & F1 & PTC resettable fuse A72-050 & 0.5 A hold / 1 A trip
+& radial, 5.08 mm & C135425 & +5 V input \\
+1 & D11 & 1N5339B Zener & 5.6 V, 5 W & DO-15 vertical &
+C5444832 & Rail clamp; band (cathode) in the square pad \\
+4 & D1--D4 & Kingbright L-53ID red LED & 5 mm, standard
+brightness & 5 mm & C598429 & SEL 1--4; cathode in the
+square pad \\
+4 & D5--D8 & Kingbright WP7113GD green LED & 5 mm & 5 mm &
+C7117617 & WR 1--4 \\
+2 & D12, D13 & Kingbright WP483YDT yellow LED & 5 mm & 5 mm
+& C6001325 & ``12V'' and ``5V'' present \\
+9 & R1--R8, R21 & YAGEO MFR-25JT-52-470R & 470 Ω, ¼ W, 5 \%
+& axial, vertical 7.62 mm & C176518 & LED series, ≈ 5.5--6.5
+mA. Design docs: 1.5 kΩ \\
+5 & R14--R18 & YAGEO MFR-25JT-52-470R & 470 Ω, ¼ W, 5 \% &
+axial, vertical 7.62 mm & C176518 & Bus series /
+fault-current limit \\
+5 & R9--R13 & YAGEO MFR-25JT-52-10K & 10 kΩ, ¼ W, 5 \% &
+axial, vertical 7.62 mm & C176451 & Bus pull-ups (receiver
+side) \\
+1 & R19 & YAGEO MFR-25FTE52-2K2 & 2.2 kΩ, ¼ W, 1 \% & axial,
+vertical 7.62 mm & C172997 & +12 V indicator series, ≈ 4.5
+mA. Design docs: 4.7 kΩ \\
+4 & C1, C2, C3, C6 & Ceramic disc & 100 nF, 50 V & 2.5 mm
+pitch & C45664 & Decoupling U1--U3; rail entry (C6) \\
+1 & C4 & Electrolytic, radial & 10 µF, 16 V & 5 mm dia, 2.5
+mm pitch & C53330112 & Bulk on +5 V; + lead in the square
+pad \\
+1 & J2 & TE 350211-1 Mate-N-Lok 4-position header (vertical;
+1-641737-1 is the right-angle equivalent on the same pads) &
+--- & pads on the solder side & C305826 & SA400 pinout: 1
++12 V, 2/3 RTN, 4 +5 V; pin 1 = square pad.
+\textcolor[HTML]{0040A0}{\textbf{Not fitted by JLCPCB} ---
+hand-fit after 1.1.6a} \\
+--- & J1 & 34-contact card edge, part of the PCB & gold
+fingers, bevel & --- & --- & Even pins on the component
+side, odd (GND) underneath; key slot between 4 and 6 \\
+4 & H1--H4 & M3 × 6 mm standoff + M3 screw (or \#4-40) & ---
+& --- & --- & Not in the JLCPCB order \\
+\end{longtable}
+
+Off-board parts for the test run (not on the board).
+Drawings: Appendix D (jig, pigtail, key plug) and Appendix E
+(cable).
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.2571}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3429}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.4000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Item
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Part
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Source
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Cable / jig connector & 3M 3463-0001, 34-way card-edge IDC &
+https://www.mouser.com/c/?q=3463-0001 \\
+Power pigtail & TE/AMP 1-480424-0 housing + 60619-1 pins &
+https://www.te.com/en/product-1-480424-0.html \\
+Key plug (pin 4/6 slot) & 3M 3439-2 &
+https://www.mouser.com/c/?q=3439-2 \\
+Jig pull-ups & 150 Ω ¼ W × 5, 5 SPST switches & any \\
+\end{longtable}
+
+\cleardoublepage
+\hypertarget{appendix-d-test-fixtures-off-board-parts-for-the-test-run}{%
+\subsection{Appendix D --- Test fixtures (off-board parts
+for the test
+run)}\label{appendix-d-test-fixtures-off-board-parts-for-the-test-run}}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth,height=0.885\textheight,keepaspectratio]{img/fixtures.pdf}
+\caption{D.1 bus-simulator jig for Phase 2, D.2 power
+pigtail for J2, D.3 key-plug position. Drawn in
+\texttt{pdf/fixtures.tex}; parts in Appendix C.}
+\end{figure}
+
+\clearpage\begin{landscape}
+\hypertarget{appendix-e-six-connector-cable-for-phase-3}{%
+\subsection{Appendix E --- Six-connector cable for Phase
+3}\label{appendix-e-six-connector-cable-for-phase-3}}
+
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{../output/cable.png}
+\caption{TRS-80 Model I six-connector floppy cable,
+straight-through, with the DIAG connector second so the
+terminated drive stays at the far end.
+\texttt{output/cable.png}, built by \texttt{gen/build.py};
+build notes and the pulled-pin variant in
+\texttt{docs/CABLE.md}.}
+\end{figure}
+
+\end{landscape}\clearpage
+\hypertarget{appendix-f-revision-history-of-this-test-plan}{%
+\subsection{Appendix F --- Revision history of this test
+plan}\label{appendix-f-revision-history-of-this-test-plan}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.0769}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.1282}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.7949}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Version
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Date
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Change
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1.0 & 2026-10-19 & First issue: three phases (unpowered,
+bench supply + jig, on the EI), record sheets \\
+1.1 & 2026-10-19 & Populated-board wireframe and legend \\
+1.2 & 2026-10-19 & Design-review findings F1--F4 folded in
+(§0.7, 2.6.17, 2.7.2, 2.7.4, 3.2.5, 3.3.7, §4, §5.3);
+red/blue colour key \\
+1.3 & 2026-10-19 & Drawings moved to appendices: A.1 board
+wireframe, A.2 legend, B schematic (new, circuitikz), C
+parts list; each on its own sheet \\
+1.4 & 2026-10-19 & Appendix D test-fixture drawings (jig,
+power pigtail, key plug), Appendix E cable drawing \\
+1.5 & 2026-10-19 & J2 handedness check 1.1.6a before any
+power; J2 hand-fitted (JLCPCB left it off all five boards);
+board drawing frozen at v0.2.3; GitHub repo is the hand-off
+point \\
+1.6 & 2026-10-19 & Only A.1, A.2, B and C have blank backs;
+D and E share a sheet \\
+1.7 & 2026-10-19 & Renamed for the repo
+(trs80-m1-drive-monitor); §1.0 explains ohms / continuity /
+diode mode and meter polarity for the unpowered checks;
+revision history moved here \\
+1.8 & 2026-10-19 & \textcolor[HTML]{0040A0}{Record sheets
+(§5) as full grids, boxed cells, for writing readings in by
+hand} \\
+\end{longtable}
+
+The plan is built from \texttt{docs/TEST\_PLAN.md} by
+\texttt{pdf/build\_test\_plan.py} (pandoc + LuaLaTeX); each
+build's PDF is
+\texttt{pdf/trs80-m1-drive-monitor\_test\_plan\_v\textless{}version\textgreater{}.pdf}
+and a copy sits at the top of the repo.
+
+\end{document}
