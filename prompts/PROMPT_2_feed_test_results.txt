@@ -1,0 +1,14 @@
+Here are the bring-up results for the v0.2.3 boards (from docs\TEST_PLAN.md record sheets):
+
+<paste or attach the filled-in record sheets / photos / measurements here — at minimum:
+ - J2 handedness check: yellow (+12 V) wire landed on the pad marked +12V? yes / no, and which side the header ended up on
+ - the three measured dimensions: tab edge to corner (J1_TAB_CORNER_GAP), key-plug width (J1_KEY_SLOT_W), J2 pin drill (J2_DRILL)
+ - TEST_PLAN 3.3.7: U1 input-node low level on the terminated bus (volts), with 74LS14 and, if tried, with a 74HCT14 in the socket
+ - 2.4.2: D11 leakage at 5.25 V
+ - anything that failed or was marginal>
+
+Fold these into the project:
+1. Update gen\config.py (the three dimensions; J2_PIN1_X / J2_PIN_DIR if the handedness check failed) with the measurement as the source comment, and docs\MECHANICAL.md (remove the ASSUMED tags that are now measured).
+2. Record results in docs\CHANGELOG.md and tick docs\TODO.md. Keep THEORY_OF_OPERATION.md honest — if 3.3.7 shows the worst-case margin problem (F1) on the real bus, say so in §3.0 and make the v0.3 fix mandatory, not planned.
+3. Decide with me: is a v0.2.4 re-spin (J2 on top, nothing else) worth ordering, or do we go straight to v0.3? Give me the trade-off in a few lines, not a report.
+4. Bump the version (0.2.5 if only config/docs change), run verify.py / outputs.py / build_pdf.py, and update README.md, the design PDF and the project zip in the folder; superseded artefacts go to _superseded\.

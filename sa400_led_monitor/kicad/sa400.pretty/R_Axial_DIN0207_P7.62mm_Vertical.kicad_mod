@@ -1,0 +1,12 @@
+(footprint "R_Axial_DIN0207_P7.62mm_Vertical"
+    (version 20221018) (generator sa400_gen)
+    (descr "+12 V indicator series")
+    (attr through_hole)
+    (fp_text reference "R19" (at 0 -2.5) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))) (tstamp ff5311d8-d5d4-4ded-a925-fba212c6f956))
+    (fp_text value "2k2" (at 0 -1) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))) (tstamp 84c36e57-36cf-4ccf-a9c7-9da41a281088))
+    (fp_circle (center 0 0) (end 1.5 0) (stroke (width 0.12) (type solid)) (fill none) (layer "F.SilkS") (tstamp 96d168ee-ed5d-4d17-a6a7-09f366594a8c))
+    (fp_line (start 0 1.5) (end 0 6.42) (stroke (width 0.12) (type solid)) (layer "F.SilkS") (tstamp d1221e34-a454-4b93-afd4-47989f67c27f))
+    (fp_rect (start -1.5 -1.5) (end 1.5 8.87) (stroke (width 0.05) (type solid)) (fill none) (layer "F.CrtYd") (tstamp 5729408b-f337-4af9-8a87-6df046d8702a))
+    (pad "1" thru_hole circle (at 0 0) (size 1.6 1.6) (drill 0.8) (layers "*.Cu" "*.Mask") (tstamp 67e8e797-d2c9-4335-88e9-321ab060cab1))
+    (pad "2" thru_hole circle (at 0 7.62) (size 1.6 1.6) (drill 0.8) (layers "*.Cu" "*.Mask") (tstamp 14484a91-054a-4ae6-9108-4ec85be906cc))
+)

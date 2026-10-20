@@ -1,0 +1,887 @@
+% sa400_led_monitor design document - LuaLaTeX
+\documentclass[11pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif}
+\setsansfont{DejaVu Sans}
+\setmonofont[Scale=0.85]{DejaVu Sans Mono}
+\usepackage[margin=20mm,bottom=24mm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,longtable,array,tabularx}
+\usepackage{graphicx}
+\usepackage{pdfpages}
+\usepackage{pdflscape}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage[american]{circuitikz}
+\usetikzlibrary{calc,positioning,arrows.meta}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black,pdftitle={sa400\_led\_monitor v0.2.4 Design Document},pdfauthor={Ven}}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\footnotesize,breaklines=true,columns=fullflexible,frame=single,framerule=0.3pt}
+
+% ---------------------------------------------------------------- document identity
+\newcommand{\DocName}{sa400\_led\_monitor\_design\_v0.2.4}
+\newcommand{\DocVersion}{v0.2.4}
+\newcommand{\DocCreated}{2026-09-05}
+\newcommand{\DocUpdated}{2026-10-19}
+
+% footer on every page: document name, created/updated, version, Page X of Y
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.3pt}
+\fancyfoot[L]{\footnotesize\texttt{\DocName}\quad Created \DocCreated\ / Updated \DocUpdated\quad \DocVersion}
+\fancyfoot[R]{\footnotesize Page \thepage\ of \pageref{LastPage}}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0.3pt}
+  \fancyfoot[L]{\footnotesize\texttt{\DocName}\quad Created \DocCreated\ / Updated \DocUpdated\quad \DocVersion}
+  \fancyfoot[R]{\footnotesize Page \thepage\ of \pageref{LastPage}}}
+
+\newcommand{\nb}[1]{\overline{\mathrm{#1}}}      % active-low / negation: overline
+\newcommand{\assumed}{\textbf{\textcolor{red!70!black}{ASSUMED}}}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+% ================================================================= title
+% title page keeps the running footer (footer on every page)
+\vspace*{25mm}
+{\Huge\bfseries sa400\_led\_monitor}\\[4mm]
+{\LARGE SA400 form-factor drive-select / write-gate LED monitor}\\[3mm]
+{\Large Complete design document --- \DocVersion}\\[12mm]
+
+\begin{tabular}{@{}ll@{}}
+Board & 5.5 $\times$ 5.0 in, 2 layers, Shugart 34-pin card edge, AMP Mate-N-Lok power\\
+Logic & 74LS14 receivers, 74LS06 (red, drive selected), 74LS00 (green, write gate)\\
+Power & SA400 usage: +5 V logic, +12 V present; PTC, P-MOSFET reverse switch, 5.6 V clamp; 470 $\Omega$ bus isolation\\
+Target & TRS-80 Model I Expansion Interface floppy bus, JLCPCB fabrication\\
+Owner & Ven\\
+Created & \DocCreated\\
+Updated & \DocUpdated\\
+Status & KiCad 10.0.6 DRC 0 / ERC 0; three physical measurements outstanding (Section~\ref{sec:todo})\\
+\end{tabular}
+
+\vspace{15mm}
+\begin{center}
+\includegraphics[width=0.9\textwidth]{board_top_kicad.png}
+\end{center}
+\vfill
+{\small Generated from the Python design source in \texttt{gen/}. Every dimension in this document is a value in
+\texttt{gen/config.py}; items marked \assumed{} are design decisions not yet confirmed against hardware.}
+\clearpage
+
+\tableofcontents
+\clearpage
+
+% ================================================================= 1 overview
+\section{Overview and specification}
+
+\subsection{What the board does}
+The board plugs onto the 34-conductor Shugart floppy bus exactly as a fifth drive would and shows, on eight
+LEDs, which of the four drives the host is addressing and whether it is writing:
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+LED & Colour & Lights when\\
+\midrule
+D1--D4 ``SEL'' & red & the host asserts DRIVE SELECT 1--4\\
+D5--D8 ``WR'' & green & the host asserts DRIVE SELECT $n$ \textbf{and} WRITE GATE\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Per drive $n$, with the bus-side signals active-low and the post-receiver signals active-high:
+\[
+\mathrm{RED}_n = \mathrm{DS}_n \qquad\qquad \mathrm{GREEN}_n = \mathrm{DS}_n \cdot \mathrm{WG}
+\]
+Red stays on during a write; green joins it. Two yellow LEDs beside the power header show that +12 V and
++5 V are present.
+
+\subsection{Specification}
+\begin{center}
+\begin{tabular}{@{}p{45mm}p{115mm}@{}}
+\toprule
+Item & Value\\
+\midrule
+Bus interface & Shugart 34-pin card edge (J1), high-impedance tap, no terminators, never drives the bus\\
+Signals monitored & DRIVE SELECT 1--4 (pins 10, 12, 14, 6), WRITE GATE (pin 24)\\
+Power & +5 V from J2 pin 4 (Commercial Mate-N-Lok 4-pos, SA400 pinout, component side since 0.2.4) $\to$ PTC $\to$ P-MOSFET $\to$ logic, $\approx$ 45 mA; +12 V pin lights an indicator (4.5 mA)\\
+Protection & PTC 0.5 A, IRF4905 P-MOSFET reverse-polarity switch (millivolts of drop), 5.6 V Zener clamp on +5 V, 470 $\Omega$ series in each bus line\\
+Indicators & 8 $\times$ 5 mm LEDs, $\approx$ 5.5 mA each with 470 $\Omega$ (1.5 k$\Omega$ for high-efficiency LEDs)\\
+Logic & 74LS14, 74LS00, 74LS06 --- all DIP-14, socketed\\
+Board & 139.70 $\times$ 127.00 mm, 1.6 mm, 2 layers, 1 oz, ENIG + hard-gold bevelled fingers\\
+Mounting & 4 $\times$ M3 (deviation from the SA400's snap clamps)\\
+Fab & JLCPCB, gerbers in \texttt{output/gerbers/}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Package contents}
+\begin{center}
+\begin{tabular}{@{}p{55mm}p{105mm}@{}}
+\toprule
+Path & Contents\\
+\midrule
+\texttt{kicad/} & KiCad 10 project: \texttt{.kicad\_pro}, \texttt{.kicad\_sch}, \texttt{.kicad\_pcb}, \texttt{sa400.pretty/}, \texttt{sa400.kicad\_sym}, lib tables\\
+\texttt{output/gerbers/} & Gerber X2 + Excellon plotted by KiCad 10.0.6\\
+\texttt{output/drc.json, erc.json} & KiCad 10 DRC (with schematic parity) and ERC reports, both zero\\
+\texttt{output/*.step, *.pdf, *.png} & 3D STEP, schematic print, board renders\\
+\texttt{docs/} & Markdown originals of every section in this document\\
+\texttt{gen/} & Python generator: \texttt{config.py} (all dimensions), \texttt{design.py} (placement, netlist), \texttt{router.py}, writers, \texttt{postprocess.py}, \texttt{check.ps1}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\clearpage
+% ================================================================= 2 theory
+\section{Theory of operation}\label{sec:theory}
+
+\subsection{The Shugart bus from first principles}
+
+\paragraph{Physical layer.}
+The interface defined in the Shugart SA400L OEM manual (P/N 39019-1, section 3) is a 34-conductor ribbon
+cable that lands on a card-edge connector, J1, on each drive. The 34 contacts are 17 pairs: even numbers
+2--34 on the component side, odd numbers 1--33 directly beneath them on the solder side. \textbf{Every odd
+contact is ground.} Signals therefore alternate with grounds along the ribbon, which keeps crosstalk low on
+a cable that may run several feet. The five contacts this board uses:
+
+\begin{center}
+\begin{tabular}{@{}rll@{}}
+\toprule
+J1 pin & Signal & Direction\\
+\midrule
+10 & DRIVE SELECT 1 & host $\to$ drive\\
+12 & DRIVE SELECT 2 & host $\to$ drive\\
+14 & DRIVE SELECT 3 & host $\to$ drive\\
+6 & DRIVE SELECT 4 & host $\to$ drive\\
+24 & WRITE GATE & host $\to$ drive\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+All other even contacts (INDEX, STEP, DIRECTION, MOTOR ON, WRITE DATA, READ DATA, TRACK 00, WRITE PROTECT
+and the spares) exist as fingers so the connector seats normally, but have no copper path onto the board.
+
+\paragraph{Open-collector.}
+The manual specifies a 7438 as the host's driver. A 7438 output contains only a transistor to ground. To
+assert a line it turns that transistor on and pulls the line to about 0.4 V; to release it, it turns the
+transistor off and the line floats. Something else must pull the line to +5 V --- the terminator.
+
+\paragraph{Terminator.}
+The \emph{last} drive on the cable carries a 150 $\Omega$ pull-up pack from every signal line to +5 V
+(SA400L \S3.2.1). That fixes the current the host driver sinks when it asserts a line:
+\[
+I = \frac{5\,\mathrm{V} - 0.4\,\mathrm{V}}{150\,\Omega} \approx 31\ \mathrm{mA}
+\]
+A 7438 is rated to sink 48 mA, so one terminator is fine and two would be marginal. \textbf{This is why the
+board carries no terminators}: a second 150 $\Omega$ pack in parallel would halve the resistance and push
+the host driver past its rating.
+
+\paragraph{Active-low.}
+Because pulling down is the only strong action a driver can take, ``asserted'' is the low state.
+Bus-side nets are written with an overline, e.g. $\nb{DS1}$, $\nb{WG}$.
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Line voltage & Meaning\\
+\midrule
+$\approx$ 0.4 V (host pulling down) & signal \textbf{asserted}\\
+$\approx$ 5 V (terminator pulling up) & signal released\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Receiver.}
+The manual recommends a 7414 hex Schmitt-trigger inverter. It inverts, so the logic becomes active-high
+after it; and it has hysteresis --- it switches high at about 1.7 V and low at about 0.9 V, and the 0.8 V
+gap swallows ringing and ground bounce on a long ribbon. That is exactly why Shugart specifies it.
+
+\paragraph{Timing.}
+The host asserts one DRIVE SELECT for as long as it talks to that drive: at minimum a few hundred
+microseconds for a step, typically tens to hundreds of milliseconds for a read or write. WRITE GATE is
+asserted only while write current flows, and only with a DRIVE SELECT already active (the manual requires
+100 $\mu$s of lead). The LEDs follow the lines directly with no stretching --- what you see is the truth. If
+very short accesses prove too brief to notice, a pulse-stretcher is a listed v0.3 option.
+
+\subsection{Signal path on the board}
+
+\begin{center}
+\begin{circuitikz}[scale=1.0, transform shape]
+  \node[american not port] (inv) at (2.5,0) {};
+  \node[below=1mm of inv] {\footnotesize U1 74LS14};
+  \draw (inv.in) -- (1.4,0) to[R, l_=470R (R14--R18)] (-1.6,0) node[left]{$\nb{DS}_n$ (J1)};
+  \draw (1.4,0) to[R, l=10k, *-] (1.4,2.0) node[above]{+5V};
+  \draw (inv.out) -- ++(0.8,0) coordinate (n1);
+  \node at (n1) [circle,fill,inner sep=1pt]{};
+  \node[above] at ($(inv.out)+(0.5,0.1)$) {$\mathrm{DS}_n$};
+  \node[american not port] (oc) at (7.0,1.6) {};
+  \node[below=1mm of oc] {\footnotesize U3 74LS06 (OC)};
+  \node[american nand port] (nand) at (7.0,-1.8) {};
+  \node[below=1mm of nand] {\footnotesize U2 74LS00};
+  \draw (n1) |- (oc.in);
+  \draw (n1) |- (nand.in 1);
+  \draw (nand.in 2) -- ++(-1.6,0) node[left]{WG (from U1)};
+  \draw (oc.out) -- ++(0.5,0) to[led, l_=RED, mirror] ++(1.8,0) to[R, l_=470R] ++(2.0,0) node[right]{+5V};
+  \draw (nand.out) -- ++(0.5,0) to[led, l_=GREEN, mirror] ++(1.8,0) to[R, l_=470R] ++(2.0,0) node[right]{+5V};
+\end{circuitikz}
+\end{center}
+
+\paragraph{Series resistors --- R14--R18, 470 $\Omega$.}
+Each monitored finger reaches the rest of the board only through a 470 $\Omega$ resistor (nets
+$\nb{DS}_n$ on the finger side, $\mathrm{DS}_{n,\mathrm{in}}$ on the receiver side). Their purpose is
+protection of the host, analysed in Section~\ref{sec:power}; their cost is 0.19 V of drop at the LS14's
+0.4 mA input current, which leaves a 0.4 V bus low at 0.59 V --- well under the Schmitt lower threshold.
+
+\textcolor{red!70!black}{\textbf{Correction, 2026-10-19 design review.} The 0.59 V counts only the receiver's input current. R9--R13
+sit on the \emph{receiver} side of R14--R18, so when the bus is low their $\approx$ 0.44 mA also leaves through the
+series resistor: worst case $0.4 + (0.4 + 0.44)\,\mathrm{mA} \times 470\,\Omega \approx \mathbf{0.79\ V}$ at the LS14
+input, against SN74LS14 $V_{T-}$ = 0.5 V min / 0.8 V typ / 1.0 V max. Typical parts ($V_{OL} \approx 0.25$ V,
+$I_{IL} \approx 0.2$ mA) give $\approx$ 0.55 V, so the board works on \emph{typical} margin, not worst-case margin.
+It is measured on the real bus in TEST\_PLAN.md step 3.3.7. Remedies: a 74HCT14 in U1 removes the $I_{IL}$ term with
+no board change (its input current is $\mu$A); moving the pull-ups to the finger side of the series resistor removes
+the pull-up term (planned for v0.3). With both, the receiver sees the bus voltage itself.}
+
+\paragraph{Receiver stage --- U1, 74LS14.}
+Each bus line goes from its series resistor to one input of U1. The output is the inverted, cleaned-up signal:
+$\mathrm{DS}_n$ is high when drive $n$ is selected, WG is high when the host is writing.
+
+\emph{Loading:} a 74LS14 input sources at most 0.4 mA when held low. Against the 31 mA the terminator already
+makes the host sink, that is 1.3\,\% --- the board is invisible to the bus.
+
+\emph{Pull-ups:} R9--R13, 10 k$\Omega$ to +5 V on each input. On a terminated bus they do almost nothing
+(10 k$\Omega \parallel 150\,\Omega = 148\,\Omega$). They define the inputs when the board is powered with no
+cable, or on a cable whose last drive has had its terminator pulled; without them the inputs float and the
+LEDs flicker. They add 0.5 mA to what the host sinks.
+
+\emph{Spare gate:} gate 6 of U1 has its input (pin 13) tied to ground and its output (pin 12) open. Floating
+TTL inputs usually read high but can oscillate and add supply noise.
+
+\paragraph{Red --- U3, 74LS06 open-collector inverter.}
+$\mathrm{RED}_n$ must light whenever $\mathrm{DS}_n$ is high. When $\mathrm{DS}_n$ goes high the 74LS06
+output pulls the LED cathode to ground and the LED conducts through 470 $\Omega$ from +5 V; otherwise the
+output transistor is off, the cathode floats up, no current flows. A 74LS06 was chosen over a spare 74LS14
+gate because it sinks 40 mA (74LS14: 8 mA), leaving headroom for brighter LEDs, and because an open-collector
+output has nothing fighting the LED chain.
+
+\paragraph{Green --- U2, 74LS00 quad NAND.}
+$\mathrm{GREEN}_n$ must light only when drive $n$ is selected \textbf{and} WRITE GATE is active. A NAND
+output is low exactly when both inputs are high --- precisely the condition, since both $\mathrm{DS}_n$ and
+WG are active-high after U1. The low output sinks the green LED the same way.
+
+\begin{center}
+\begin{tabular}{@{}cc|cc|l@{}}
+\toprule
+$\mathrm{DS}_n$ & WG & RED (U3 out) & GREEN (U2 out) & What you see\\
+\midrule
+0 & x & high (off) & high (off) & nothing --- drive not selected\\
+1 & 0 & \textbf{low (on)} & high (off) & red --- selected, reading or seeking\\
+1 & 1 & \textbf{low (on)} & \textbf{low (on)} & red \textbf{and} green --- writing\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{LED current.}
+The board is built with the standard-brightness 5 mm LEDs JLCPCB stocks (Kingbright L-53ID red, WP7113GD
+green, WP483YDT yellow), which want 5--10 mA, so R1--R8 and R21 are 470 $\Omega$. With the output saturated
+at about 0.4 V and a red LED dropping $\approx$ 1.9 V:
+\[
+I = \frac{5.0 - 0.4 - 1.9}{470} \approx 5.7\ \mathrm{mA}
+\]
+Green parts drop $\approx$ 2.1 V, giving $\approx$ 5.3 mA --- inside the 74LS00's 8 mA sink ($V_{OL} \le 0.5$ V).
+With high-efficiency LEDs (Kingbright WP7113LID / WP7113LGD, bright at 2 mA) use 1.5 k$\Omega$ instead
+($\approx$ 1.8 mA).
+
+\subsection{Power and protection}\label{sec:power}
+J2 carries the SA400 pinout, and the board uses the two rails exactly as the drive does: \textbf{+5 V for
+the logic}, \textbf{+12 V present} on the other pair. The SA400 spends its +12 V on motors; this board has
+none, so +12 V lights an indicator and nothing else.
+
+\begin{center}
+\begin{circuitikz}[scale=0.62, transform shape, font=\small]
+  \draw (0,0) node[left]{J2-4 +5 V} to[fuse, l=F1 PTC 0.5A] (3.2,0) -- (4.4,0);
+  \draw (4.4,-1.0) rectangle (9.0,1.0) node[pos=0.5]{\shortstack{Q1 IRF4905\\ D $\to$ S, gate to GND}};
+  \draw (6.7,-1.0) -- (6.7,-2.6) node[ground]{};
+  \draw (9.0,0) -- (10.6,0) coordinate (v5);
+  \node[above] at (10.6,0.15) {+5V};
+  \draw (v5) to[zD, l=D11 5.6V, *-] (10.6,-2.6) node[ground]{};
+  \draw (v5) -- (14.0,0) to[C, l=C6 100n, *-] (14.0,-2.6) node[ground]{};
+  \draw (14.0,0) -- (17.4,0) to[C, l=C4 10u, *-] (17.4,-2.6) node[ground]{};
+  \draw (17.4,0) -- (20.8,0) to[R, l=R21 470R, *-] (20.8,-1.5) to[led] (20.8,-2.6) node[ground]{};
+  \node[right] at (21.1,-2.0) {D13 ``5V''};
+  \draw (17.4,0) -- (24.6,0) node[right]{to logic};
+  \draw (0,-4.6) node[left]{J2-1 +12 V} to[R, l=R19 2k2] (3.2,-4.6) to[led, l=D12 ``12V''] (6.4,-4.6) node[ground]{};
+  \draw (0,-6.4) node[left]{J2-2, J2-3 RTN} -- (1.6,-6.4) node[ground]{};
+\end{circuitikz}
+\end{center}
+
+\begin{center}
+\begin{tabular}{@{}p{40mm}p{62mm}p{58mm}@{}}
+\toprule
+Part & Job & Why this value\\
+\midrule
+F1 PTC 0.5 A hold / 1 A trip & limits energy into any downstream fault; resets when it clears & board draws $\approx$ 45 mA\\
+Q1 IRF4905PBF P-MOSFET (TO-220, G-D-S), drain in / source out / gate to GND & reverse-polarity switch: correct polarity turns the channel on ($V_{GS} = -5$ V, \textbf{millivolts of drop} at 45 mA); reversed, the body diode is blocked and $V_{GS}$ is positive, nothing conducts & a series diode would drop 0.35--0.7 V, below the 74LS minimum $V_{CC}$ of 4.75 V. IRF4905 is JLCPCB stock ($V_{GS(th)}$ $-2$ to $-4$ V, 20 m$\Omega$ at $-10$ V; only partly enhanced at $-5$ V, irrelevant at 45 mA); onsemi NDP6020P (logic-level, 50 m$\Omega$ at $-4.5$ V) is the drop-in alternative. Metal tab toward the J2 edge; gate = square pad\\
+D11 1N5339B 5.6 V 5 W Zener & clamps the rail if the wrong voltage arrives (e.g. +12 V on the +5 V pin) and pulls current until F1 trips & 74LS absolute maximum $V_{CC}$ is 7 V\\
+C6 100 nF, C4 10 $\mu$F & rail decoupling at the entry point & ---\\
+R19 2.2 k$\Omega$ + D12 & ``+12 V present'' indicator, $\approx$ 4.5 mA & confirms a real drive cable with both rails\\
+R21 470 $\Omega$ + D13 & ``+5 V rail up'' indicator, $\approx$ 6 mA & shows the PTC has not tripped\\
+R14--R18 470 $\Omega$ series & limits any current the board can push into the bus & worst case 11 mA per line, see below\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{Current budget.} U1 10 mA, U2 4 mA, U3 10 mA, two drive LEDs 11 mA, pull-ups 2.5 mA, D13 6 mA:
+$\approx$ \textbf{45 mA} on +5 V ($\approx$ 80 mA if all eight drive LEDs were lit); 4.5 mA on +12 V.
+
+\paragraph{Why the series resistors protect the Expansion Interface.}
+The EI drives the bus with 7438 open-collector gates rated 5.5 V and 48 mA sink. With 470 $\Omega$ between
+each finger and everything else on the board:
+\begin{itemize}[leftmargin=8mm]
+\item a failed receiver can push at most $(5.6 - 0.4)/470 \approx 11$ mA into the EI's driver (the rail is held
+below 5.6 V by D11); with the terminator's 31 mA that is 42 mA, inside the 48 mA rating;
+\item hot-plug transients on the card edge meet 470 $\Omega$ before the LS14 input;
+\item the receiver still sees a clean low: 0.4 mA through 470 $\Omega$ is 0.19 V. \textcolor{red!70!black}{Corrected 2026-10-19: with the pull-up current included the worst case is $\approx$ 0.79 V against a 0.5 V minimum threshold --- see the correction under \emph{Series resistors}; the fault-current bound above is unaffected.}
+\end{itemize}
+
+\paragraph{Fault table.}
+\begin{center}
+\begin{tabular}{@{}p{42mm}p{70mm}p{48mm}@{}}
+\toprule
+Fault & What happens & Effect on the EI\\
+\midrule
++12 V / +5 V swapped in a miswired cable & D11 clamps at $\approx$ 6 V. \textcolor{red!70!black}{Corrected 2026-10-19: the current is \emph{not} $\approx$ 1 A --- a cold 0.5 A PTC is $\approx$ 0.5 $\Omega$, so until F1 trips it is whatever the supply, cable and Q1 will pass (amps). F1 trips well inside a second; D11 may fail, normally short, leaving the board dead with the rail at 0 V.} D12 dark, D13 dim & $\le$ 11 mA per line until F1 trips; a shorted D11 afterwards means 0 mA\\
+Reversed +5 V & Q1 stays off; nothing conducts & none\\
+Reversed +12 V & only R19/D12 see it. \textcolor{red!70!black}{Corrected 2026-10-19: D12 does not simply block --- a 5 mm LED is rated $\approx$ 5 V reverse, so it is driven $\approx$ 7 V into reverse breakdown at $\approx$ 3 mA through R19. It will most likely survive; v0.3 adds a 1N4148 in series.} & none\\
+Spike on +5 V & D11 absorbs (5 W); F1 limits & none\\
+LS14 input shorted to rail & 470 $\Omega$ limits to $\approx$ 11 mA & within the 7438 rating\\
+Board unpowered, EI on & $\approx$ 0.6 mA per line into the dead inputs & 0.1 V on a 150 $\Omega$ line\\
+Board powered, EI off & $\approx$ 0.5 mA per line into the EI & harmless\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Ground is common to both PSU returns (J2 pins 2 and 3) and to the bus (fifteen odd fingers), as in a
+drive; the receivers judge the bus lines against that ground.
+
+\subsection{Why 74LS rather than 74HCT}
+74HCT would load the bus less still, but: the board is meant to look like a 1979 drive; 74HCT outputs are
+rated only 4 mA per pin against the 74LS06's 40 mA; and 74LS14 is the modern equivalent of the 7414 Shugart
+specifies. 74HCT14/00/06 are pin-compatible substitutes if the LED resistors are raised to keep each output
+under 4 mA.
+
+\subsection{What the board deliberately does not do}
+It does not terminate the bus, does not drive anything onto it (no IC output touches J1), draws only a 4.5 mA
+indicator from +12 V, and does not stretch LED pulses.
+
+\clearpage
+% ================================================================= 3 mechanical
+\section{Mechanical}\label{sec:mech}
+
+Origin is the top-left corner of the outline in KiCad; $+y$ runs toward the front (LED) edge. Every value is
+in \texttt{gen/config.py}; change it there and rebuild.
+
+\subsection{Board}
+\begin{center}
+\begin{tabular}{@{}p{40mm}p{60mm}p{60mm}@{}}
+\toprule
+Item & Value & Source\\
+\midrule
+Outline & 139.70 $\times$ 127.00 mm (5.5 $\times$ 5.0 in) & Ven\\
+Thickness & 1.6 mm & 3M TS-0010 (1.37--1.78); SA400L fig 3-2 (0.062 in)\\
+Rear edge & recessed 11.43 mm along its full length; only the J1 tab reaches $y = 0$ & Ven's SA400 PCB photo\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{J1 card-edge tab}
+The tab follows 3M TS-0010-14 sheet 3, ``Recommended PCB Layout'' for the 3463 34-way connector --- the
+connector Shugart names as P1; Shugart's figure 3-2 is a copy of it.
+
+\begin{center}
+\begin{tabular}{@{}p{42mm}p{68mm}p{50mm}@{}}
+\toprule
+Item & Value & Source\\
+\midrule
+Tab width (dim A) & 45.59 mm (1.795 $\pm$ .005 in), $x$ = 89.03--134.62 & 3M\\
+Tab depth & 11.43 mm (.450 min) & 3M / SA400L\\
+Tab corner radius & 1.02 mm (R.040) & 3M\\
+Contact pitch & 2.54 mm $\times$ 16, non-cumulative & 3M\\
+Contact width & 1.40 mm (.055 $\pm$ .005) & 3M\\
+Contact reach & 10.16 mm (.400 $\pm$ .015) from the edge & 3M\\
+Contact setback from edge & \textbf{0.66 mm} (3M .026); JLCPCB needs $\ge$ 0.6 mm for the 30$^\circ$ bevel & 3M / JLCPCB\\
+Pin 2 centre & $x$ = 132.14 (2.475 from the tab edge) & fingers centred on A\\
+Pin 34 centre & $x$ = 91.50 & derived\\
+Handedness & pin 2 at the right viewed from the component side, fingers away; odd pins on the solder side & SA400L \S3.2 + photo\\
+Pin-2 side, tab edge to board corner & 5.08 mm & \assumed{} $\pm$1.5, scaled from photo\\
+Key slot & 0.91 mm wide $\times$ 11.43 deep between pins 4 and 6, $x$ = 128.33 & width 3M/TEAC; depth Ven\\
+Pads 3--6 & narrowed to 1.0 mm $\to$ 0.32 mm copper to slot & derived\\
+Clip holes & 2 $\times$ $\varnothing$1.6 mm \textbf{non-plated} at (132.14, 11.43) and (91.50, 11.43): on the tab-root line, in line with pins 2 and 34, for the connector's retention clips & photo; $\varnothing$ from fig 3-2 ``.063 NOM (2X)''\\
+Edge bevel & 30$^\circ$, 0.6 mm (JLCPCB); 3M draws 45$^\circ$ $\times$ 1.02 & fab option\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[x=2.2mm,y=-2.2mm,>=Latex,font=\scriptsize]
+  % coordinates: local, tab from x=0..45.59, y down positive
+  \def\tw{45.59}\def\td{11.43}
+  % board body (below the recess line)
+  \fill[green!25!black!20] (-12,\td) rectangle (\tw+7,\td+12);
+  \draw[thick,rounded corners=1.3mm] (0,\td) -- (0,0) -- (\tw,0) -- (\tw,\td);
+  \draw[thick] (-12,\td) -- (0,\td);  \draw[thick] (\tw,\td) -- (\tw+7,\td);
+  \draw[thick] (\tw+7,\td) -- (\tw+7,\td+12);   % board corner side
+  \fill[green!25!black!20] (0,0.3) rectangle (\tw,\td);
+  % fingers: pin 34 at x=2.475, pin 2 at 43.115, width 1.40, from y=0.66 to 10.16
+  \foreach \i in {0,...,16} {
+    \pgfmathsetmacro{\fx}{2.475+\i*2.54}
+    \fill[yellow!70!orange] (\fx-0.7,0.66) rectangle (\fx+0.7,10.16);
+  }
+  % key slot between pins 4 (i=15) and 6 (i=14): centre 2.475+14.5*2.54 = 39.305
+  \fill[white] (39.305-0.455,-0.2) rectangle (39.305+0.455,\td);
+  \draw (39.305-0.455,0) -- (39.305-0.455,\td) -- (39.305+0.455,\td) -- (39.305+0.455,0);
+  % clip holes at root line under pins 2 and 34
+  \fill[white] (2.475,\td) circle (0.8); \draw (2.475,\td) circle (0.8);
+  \fill[white] (43.115,\td) circle (0.8); \draw (43.115,\td) circle (0.8);
+  % labels
+  \node at (2.475,13.4) {34}; \node at (43.115,13.4) {2}; \node at (39.305,13.4) {4|6 slot};
+  % dimensions
+  \draw[<->] (0,-3) -- (\tw,-3) node[midway,below]{45.59 (1.795 in) tab};
+  \draw[<->] (48,0) -- (48,\td) node[midway,right]{11.43 tab depth};
+  \draw[<->] (2.475,16) -- (43.115,16) node[midway,above]{16 $\times$ 2.54 = 40.64};
+  \draw[<->] (\tw,-1.3) -- (\tw+5.08,-1.3) node[midway,below]{5.08};
+  \node[anchor=west] at (\tw+5.3,-1.3) {to corner (\assumed)};
+  \draw[<->] (-8,\td) -- (-8,0) node[midway,left]{recess 11.43};
+  \draw[<->] (10.095-0.7,-0.5) -- (10.095+0.7,-0.5) node[midway,below]{1.40};
+  \draw[<-] (5.015,0.66) -- (5.015,-5.5) node[above]{copper starts 0.66 from the edge};
+\end{tikzpicture}\\[1mm]
+\parbox{0.9\textwidth}{\footnotesize Component side, fingers pointing up (toward the rear of the drive). Even pins shown; odd pins are directly beneath on the solder side. Two $\varnothing$1.6 NPTH clip holes on the root line. Dimensions in mm.}
+\end{center}
+
+\subsection{J2 power header}
+TE Commercial Mate-N-Lok 4-position \emph{right-angle} header 1-641737-1 on the \emph{component} side, mating face
+at the recessed rear edge (the vertical 350211-1 fits the same pads). The SA400 carries its header on the solder
+side and 0.2.0--0.2.3 copied that; JLCPCB's single-sided (Economic) assembly then left J2 --- the only bottom-side
+part --- unpopulated, so 0.2.4 moved it. Moving a header between sides \emph{mirrors} it: pin 1 is now at the H1
+(corner) end. Both layouts rest on the same \assumed{} header handedness, which is settled on the bench, not on
+paper: header in its holes, drive plug on, continuity from the plug's yellow (+12 V) wire to the pad marked +12V;
+if it lands on +5V, the header belongs on the other side (or \texttt{J2\_PIN1\_X}/\texttt{J2\_PIN\_DIR} flip and the
+board is rebuilt).
+
+\begin{center}
+\begin{tabular}{@{}p{42mm}p{68mm}p{50mm}@{}}
+\toprule
+Item & Value & Source\\
+\midrule
+Pin pitch & 5.08 mm & TE\\
+Pin row & $y$ = 19.05 (7.62 behind the recessed edge) & \assumed\\
+Pin 1 & $x$ = 12.70 (H1 end); pins toward the board centre, pin 4 at $x$ = 27.94 & \assumed{} --- mirror of the 0.2.x solder-side layout; bench check above\\
+Drill / pad & 2.1 / 3.6 mm & TE lists the 350211-1 post at 1.6 mm [.063]; \assumed{} until ENG\_CD\_641737 is checked\\
+Pinout & 1 +12 V (indicator), 2 +12 RTN, 3 +5 RTN, 4 +5 V \textbf{(logic supply)} --- SA400 pinout; pin 1 = square pad & SA400L \S3.3\\
+Housing & right-angle, component side; mating face at the recessed rear edge ($y$ = 11.93), body to 4 mm behind the pin row ($y$ = 23.05); outline on F.SilkS / F.Fab & TE 1-641737-1 / 350211-1\\
+Labels & component side, below the housing: 1 +12V / 2 RTN / 3 RTN / 4 +5V and ``J2 PWR IN -- SA400 pinout'' & \DocVersion{}\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.95\textwidth]{j2_labels.png}\\
+{\footnotesize J2 as rendered on the component side: housing outline toward the rear edge, pin 1 (square) at the H1 end, labels below the housing. Power row at $y$ = 33.02.}
+\end{center}
+
+\subsection{Mounting}
+H1--H4: $\varnothing$3.2 mm NPTH at (6.35, 30.48), (133.35, 38.10), (6.35, 120.65), (133.35, 120.65). The real
+SA400 PCB is held by four snap clamps (P/N 54036); screw holes are a deliberate deviation for a standalone
+board. H2 is lowered to clear the cable connector body.
+
+\subsection{Reference: Ven's SA400 PCB}
+\begin{center}
+\includegraphics[width=0.78\textwidth]{sa400_photo.png}\\[2mm]
+\includegraphics[width=0.62\textwidth]{j1_vs_photo.png}\\
+{\footnotesize Left: the real tab. Right: this design, rotated to the same orientation.}
+\end{center}
+
+\clearpage
+% ================================================================= 4 layout
+\section{Placement and layout}
+\begin{center}
+\includegraphics[width=\textwidth]{placement.png}\\
+{\footnotesize Placement, component side (all parts on this side since 0.2.4).}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{render_top.png}\\
+{\footnotesize \textbf{Component side (front)}, KiCad 10 raytraced render. J1 tab at the top right, J2 at the top left, LEDs along the front edge.}
+\end{center}
+\clearpage
+\begin{center}
+\includegraphics[width=0.92\textwidth]{render_bottom.png}\\
+{\footnotesize \textbf{Solder side (back)}, seen from the back --- so the J1 tab appears at the top \emph{left} and J2 (the Mate-N-Lok header) at the top right. Olive areas are the filled GND pour; bare pads where the header, LEDs and DIPs solder.}
+\end{center}
+\clearpage
+\subsection{Copper, side by side}
+The raytraced views above show the board under solder mask, which hides the copper. These are the copper
+layers themselves --- what to look at when checking connectivity.
+
+\begin{center}
+\includegraphics[width=0.93\textwidth]{copper_top.png}\\
+{\footnotesize \textbf{F.Cu} --- component-side copper: traces and pads (silkscreen overlaid for orientation).}
+\end{center}
+\clearpage
+\begin{center}
+\includegraphics[width=0.93\textwidth]{copper_bottom.png}\\
+{\footnotesize \textbf{B.Cu} --- solder-side copper, viewed from the back (J2 at the top right). The blue field
+is the GND pour; every GND pad sits in it with thermal spokes, every other pad has a clearance ring.}
+\end{center}
+\clearpage
+\subsection{Power nets isolated}
+\begin{center}
+\includegraphics[width=0.93\textwidth]{net_gnd.png}\\
+{\footnotesize \textbf{GND}: J2 pins 2/3 $\to$ Q1 gate, D11, C6, C4, D12/D13 $\to$ U1 pins 7/13, C1 $\to$ the fifteen odd
+fingers of J1 $\to$ U3 pins 7/11/13, C3 $\to$ U2 pin 7, C2. The B.Cu pour ties all of these as well.}
+\end{center}
+\clearpage
+\begin{center}
+\includegraphics[width=0.93\textwidth]{net_5v.png}\\
+{\footnotesize \textbf{+5V}: Q1 source $\to$ D11, C6, C4, R21 $\to$ U1 pin 14, C1 $\to$ pull-ups R9--R13 $\to$ U2/U3 pin 14,
+C2, C3 $\to$ LED series resistors R1--R8.}
+\end{center}
+
+\clearpage
+\begin{center}
+\includegraphics[width=0.93\textwidth]{net_5v_in.png}\\
+{\footnotesize \textbf{+5V\_IN} (PSU +5 V): J2 pin 4 $\to$ F1 $\to$ Q1 drain. J2 pin 1 (+12 V) goes only to R19 $\to$ D12.}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.85\textwidth]{board_top_kicad.png}\\
+{\footnotesize Combined layer view (front copper red, back copper blue with the pour filled).}
+\end{center}
+
+Design rules: 0.40 mm signal / 0.60 mm power traces, 0.30 mm clearance, 0.80/0.40 mm vias, 0.50 mm copper
+to edge (0.32 at the key slot, 0.66 at the fingers). JLCPCB minima are 0.127 / 0.127 / 0.45 / 0.30.
+
+% ================================================================= 5 schematic
+\clearpage
+\begin{landscape}
+\section{Schematic}
+\begin{center}
+\includegraphics[page=1,width=\linewidth]{sa400_led_monitor_schematic.pdf}
+\end{center}
+{\footnotesize Label-driven schematic as generated; every pin carries a global label, so the netlist is exact
+(KiCad 10 schematic parity: 0 issues). The full-size sheet is \texttt{output/sa400\_led\_monitor\_schematic.pdf}.}
+\end{landscape}
+
+\clearpage
+% ================================================================= 6 BOM
+\section{Bill of materials}\label{sec:bom}
+
+\begin{longtable}{@{}p{8mm}p{18mm}p{52mm}p{22mm}p{62mm}@{}}
+\toprule
+Qty & Ref & Part & Package & Example part / source\\
+\midrule
+\endhead
+1 & U1 & 74LS14 hex Schmitt-trigger inverter & DIP-14 & TI SN74LS14N, LCSC C73064 \url{https://www.ti.com/product/SN74LS14}\\
+1 & U2 & 74LS00 quad 2-input NAND & DIP-14 & TI SN74LS00N, LCSC C181629 \url{https://www.ti.com/product/SN74LS00}\\
+1 & U3 & 74LS06 hex inverter, open-collector & DIP-14 & TI SN74LS06N, LCSC C22384767 \url{https://www.ti.com/product/SN74LS06}\\
+3 & U1A--U3A & DIP-14 socket & DIP-14 & any dual-wipe 14-pin socket, LCSC C190815\\
+1 & F1 & PTC 0.5 A hold / 1 A trip, $\ge$ 16 V & radial 5.08 & A72-050 (LCSC C135425) or Littelfuse RUEF050 \url{https://www.mouser.com/c/?q=RUEF050}\\
+1 & Q1 & P-MOSFET, pins G-D-S & TO-220 vertical, tab toward J2 & IRF4905PBF (LCSC C2564) \url{https://www.mouser.com/c/?q=IRF4905PBF}; alt. onsemi NDP6020P\\
+1 & D11 & Zener 5.6 V 5 W, +5 V clamp & DO-15 vertical & 1N5339B (LCSC C5444832) \url{https://www.mouser.com/c/?q=1N5339B}\\
+2 & D12, D13 & Yellow 5 mm LED, ``12V'' / ``5V'' present & 5 mm & Kingbright WP483YDT (LCSC C6001325) \url{https://www.mouser.com/c/?q=WP483YDT}\\
+4 & D1--D4 & Red 5 mm LED, standard brightness, $V_f \approx$ 1.9 V & 5 mm & Kingbright L-53ID (LCSC C598429) \url{https://www.mouser.com/c/?q=L-53ID}; high-efficiency WP7113LID also fits (then 1.5 k$\Omega$)\\
+4 & D5--D8 & Green 5 mm LED, standard brightness, $V_f \approx$ 2.1 V & 5 mm & Kingbright WP7113GD (LCSC C7117617) \url{https://www.mouser.com/c/?q=WP7113GD}; high-efficiency WP7113LGD also fits (then 1.5 k$\Omega$)\\
+8 & R1--R8 & 470 $\Omega$ 5\,\% 1/4 W (1.5 k$\Omega$ for high-efficiency LEDs) & axial vertical 7.62 & LED series, $\approx$ 5.5 mA; YAGEO MFR-25JT-52-470R, LCSC C176518\\
+5 & R9--R13 & 10 k$\Omega$ 5\,\% 1/4 W & axial vertical 7.62 & bus pull-ups; YAGEO MFR-25JT-52-10K, LCSC C176451\\
+5 & R14--R18 & 470 $\Omega$ 5\,\% 1/4 W & axial vertical 7.62 & bus series / fault-limiting; LCSC C176518\\
+1 & R19 & 2.2 k$\Omega$ 1/4 W & axial vertical 7.62 & +12 V indicator series, $\approx$ 4.5 mA; YAGEO MFR-25FTE52-2K2, LCSC C172997\\
+1 & R21 & 470 $\Omega$ 1/4 W & axial vertical 7.62 & +5 V indicator series, $\approx$ 6 mA; LCSC C176518\\
+3 & C1--C3 & 100 nF 50 V ceramic & disc 2.5 mm & IC decoupling; LCSC C45664\\
+1 & C4 & 10 $\mu$F 16 V electrolytic & radial 5 mm, 2.5 mm pitch & bulk on +5 V; + in the square pad; LCSC C53330112\\
+1 & C6 & 100 nF 50 V ceramic & disc 2.5 mm & rail entry decoupling; LCSC C45664\\
+1 & J2 & TE Commercial Mate-N-Lok 4-pos right-angle header 1-641737-1 & component side & \url{https://www.te.com/en/product-1-641737-1.html}; vertical 350211-1 (LCSC C305826) fits the same pads\\
+--- & J1 & 34-contact card edge, part of the PCB & --- & gold fingers + bevel, fab option\\
+4 & H1--H4 & M3 $\times$ 6 mm standoff + screw & --- & any\\
+\bottomrule
+\end{longtable}
+
+LED cathode = shorter lead / flat side of the rim, into the \textbf{square} pad (pin 1). Zener band (cathode) also goes in the square pad; Q1 gate is pin 1 (square) and its metal tab faces the J2 edge --- the silkscreen shows the body, the tab line and G/D/S.
+
+\paragraph{Mating parts (reference).}
+3M 3463-0001 34-way card-edge IDC (\url{https://www.mouser.com/c/?q=3463-0001}); 3M 3439-2 key plug for the pin 4/6 slot
+(\url{https://www.mouser.com/c/?q=3439-2}); AMP 1-480424-0 housing + 60619-1 pins for the power plug
+(\url{https://www.te.com/en/product-1-480424-0.html}).
+
+\paragraph{Cost estimate (single board, 2026).}
+ICs + sockets $\approx$ \$4, protection and indicators \$3, LEDs \$2, passives \$1, J2 \$1, standoffs \$1; PCB (JLCPCB, 5 pcs with the gold-finger
+option) \$25--35 for the batch.
+
+\clearpage
+% ================================================================= 7 cable
+\section{Six-connector Model I cable}\label{sec:cable}
+
+Radio Shack's four-drive cable for the Model I has five 34-contact card-edge connectors: one for the
+Expansion Interface (EI) and one per drive. This cable adds a sixth for the monitor. Electrically the
+monitor is a high-impedance tap, so it can sit anywhere on the ribbon.
+
+\begin{center}
+\includegraphics[width=\textwidth]{cable.png}
+\end{center}
+
+\paragraph{Why the monitor goes next to the EI, not at the end.}
+The \emph{last} drive on the cable carries the 150 $\Omega$ terminators (Radio Shack 26-1160 / 26-1164 are
+the terminated drives; 26-1161 is unterminated). Everything past the terminated drive is an unterminated
+stub, and a stub of any length is where reflections live. Putting the monitor second keeps the terminated
+drive at the physical end.
+
+\paragraph{Parts.}
+6 $\times$ 3M 3463-0001 (\url{https://www.mouser.com/c/?q=3463-0001}); 1.3 m 3M 3365/34 ribbon
+(\url{https://www.mouser.com/c/?q=3365\%2F34}); optional 3M 3448-56 strain reliefs; optional 3M 3439-2 key plug.
+The EI's disk connector is a 34-contact card edge like a drive's, and the monitor's tab is built to the same
+3M drawing, so all six connectors are identical.
+
+\paragraph{Drive select --- two ways, pick one.}
+\begin{description}[leftmargin=8mm]
+\item[(a) Straight-through (recommended).] All 34 contacts in every connector. Each drive is set to its own
+select with its own switch/shunt: drive 0 = DS1 = pin 10, drive 1 = DS2 = pin 12, drive 2 = DS3 = pin 14,
+drive 3 = DS4 = pin 6.
+\item[(b) Radio Shack ``pulled pin'' style.] Radio Shack shipped Model I drives with \emph{all four} selects
+enabled and pulled three select contacts from each drive connector, so cable position set the drive number:
+C3 keeps 10 (removes 12, 14, 6); C4 keeps 12; C5 keeps 14; C6 keeps 6. C1 (EI) and C2 (monitor) keep all
+contacts. Use this only if the drives are still shunted for all four selects --- an all-select drive on a
+straight cable answers to every drive number and two drives fight on the data lines. To remove a 3M
+contact: before pressing the cover, pull the unwanted contact out of the body with fine pliers; the ribbon
+conductor above it stays intact for the drives further along.
+\end{description}
+
+\paragraph{Pin 1.} Ribbon conductor 1 (red stripe) to contact 1 (triangle mark) of every connector. On every
+card edge pin 1 is on the solder side, pin 2 above it on the component side, pin 2 at the right viewed from
+the component side with the fingers pointing away.
+
+\paragraph{Assembly.} Cut and square the ribbon; mark 150 / 450 / 200 / 200 / 200 mm; lay it in each body
+with the stripe on the triangle side; pull contacts for (b); press the cover (3M 3640 press with the 3443-63
+locator, or a vise with flat wooden blocks --- press evenly, never rock); fit strain reliefs; buzz all 34
+conductors end to end.
+
+\paragraph{Check before first use.} Terminated drive at C6, all other terminators removed; one select per
+drive; stripe on the same edge at all six connectors; monitor powered from its own J2. Power up with only
+the EI and the monitor connected: RED 1 should flash as the ROM tries to boot from drive 0, and no green should
+ever light without a write.
+
+\clearpage
+% ================================================================= 8 fabrication
+\section{Fabrication --- JLCPCB}\label{sec:fab}
+
+\subsection{Files}
+\texttt{output/gerbers/}: \texttt{-F\_Cu.gtl}, \texttt{-B\_Cu.gbl}, \texttt{-F\_Mask.gts}, \texttt{-B\_Mask.gbs},
+\texttt{-F\_Silkscreen.gto}, \texttt{-B\_Silkscreen.gbo}, \texttt{-Edge\_Cuts.gm1}, \texttt{-PTH.drl}, \texttt{-NPTH.drl},
+two drill maps and the \texttt{.gbrjob}. Zip the folder and upload it as one archive.
+
+\subsection{Order options}
+\begin{center}
+\begin{tabular}{@{}p{45mm}p{30mm}p{85mm}@{}}
+\toprule
+Option & Choose & Why\\
+\midrule
+Layers & 2 & \\
+Thickness & \textbf{1.6 mm} & 3M connector spec 1.37--1.78 mm\\
+Copper & 1 oz & \\
+Surface finish & \textbf{ENIG} & required under the fingers; HASL is not acceptable on a card edge\\
+Gold fingers & \textbf{Yes} & hard gold on the tab\\
+Bevel / chamfer & \textbf{Yes} & JLCPCB bevels at 30$^\circ$, 0.6 mm deep; finger copper starts 0.66 mm in to suit it\\
+Solder mask / silk & any / white & \\
+Castellated holes & No & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Verification already done (KiCad 10.0.6 \texttt{kicad-cli})}
+\begin{center}
+\begin{tabular}{@{}p{75mm}p{85mm}@{}}
+\toprule
+Check & Result\\
+\midrule
+\texttt{pcb drc --schematic-parity --severity-all} & \textbf{0 violations, 0 unconnected, 0 parity issues} (\texttt{output/drc.json})\\
+\texttt{sch erc --severity-all} & \textbf{0 violations} (\texttt{output/erc.json})\\
+Gerber / drill plot & \texttt{output/gerbers/}, 12 files\\
+GND zone & filled and saved in the board file\\
+J2 pin 1 on B.Cu & square pad at $x$ = 27.94 in the plotted gerber\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Before you upload}
+\begin{enumerate}[leftmargin=8mm]
+\item Open \texttt{kicad/sa400\_led\_monitor.kicad\_pro} in KiCad 10.
+\item Re-run DRC and ERC yourself: \texttt{gen/check.ps1} does both plus the gerber and drill plots.
+\item Confirm the three measurements in Section~\ref{sec:todo}; if any changes, rebuild
+(\texttt{python3 gen/build.py}, then \texttt{postprocess.py}) and re-plot.
+\item Zip \texttt{output/gerbers/} and upload.
+\end{enumerate}
+
+\subsection{Assembly}
+The board is entirely through-hole with J2 on the back. JLCPCB's PCBA now hand/wave-solders THT parts
+(\$3.50 setup + \$0.0173 per joint) from their library or consigned stock; PCBWay and Screaming Circuits
+offer turnkey assembly buying exact parts from any distributor. \texttt{output/assembly/} holds a
+JLCPCB-format BOM and CPL (LCSC column left blank for you to pick parts in their matcher) and the KiCad
+position file. For one to five boards, hand assembly (about 110 joints) is the sensible route and verifies
+the J2 hole size and LED polarity before paying an assembler. Details: \texttt{docs/ASSEMBLY.md}.
+
+% ================================================================= 9 todo
+\section{To do}\label{sec:todo}
+\subsection*{v0.2.x boards (5 populated ordered from JLCPCB, re-ordered 2026-10-05 with the fab files only)}
+\begin{itemize}[leftmargin=8mm]
+\item[$\square$] Measure tab-edge-to-corner on the SA400 PCB $\to$ \texttt{J1\_TAB\_CORNER\_GAP} (5.08 assumed)
+\item[$\square$] Measure key plug thickness (3M 3439-2) $\to$ \texttt{J1\_KEY\_SLOT\_W} (0.91)
+\item[$\square$] Confirm the header post diameter $\to$ \texttt{J2\_DRILL} (2.1; TE lists the 350211-1 post at 1.6 mm) — https://www.te.com/en/product-1-641737-1.html
+\item[$\square$] \textbf{Bench-check J2 handedness} (header in holes, plug on, yellow wire $\to$ \texttt{+12V} pad) on the 0.2.3 boards; sets \texttt{J2\_PIN1\_X}/\texttt{J2\_PIN\_DIR} for 0.2.4 — see docs/ASSEMBLY.md
+\item[$\square$] 0.2.4: J2 moved to the component side (right-angle 1-641737-1 or vertical 350211-1); single-sided PCBA now covers every part
+\item[$\boxtimes$] KiCad 10 DRC + ERC clean; schematic/PCB linked; F8 metadata emulated
+\item[$\square$] Run \emph{Update PCB from Schematic} (F8) once in the GUI — expect an empty change list
+\item[$\boxtimes$] LED resistor decided: 470R (standard-brightness LEDs from JLCPCB stock); R19 2k2 — schematic/BOM/docs at 0.2.3
+\item[$\boxtimes$] JLCPCB BOM carries LCSC numbers; sockets listed as U1A–U3A with CPL rows (0.2.3)
+\item[$\boxtimes$] Q1 silkscreen redrawn to the TO-220 convention (tab toward J2) after JLCPCB's 2026-10-07 query (0.2.3)
+\item[$\boxtimes$] Reply to JLCPCB (orientation confirmed, 2026-10-07); boards received 2026-10-19
+\item[$\boxtimes$] Power protection: PTC, P-MOSFET reverse switch, 5.6 V clamp, series bus resistors (0.2.2)
+\end{itemize}
+\subsection*{Board bring-up — see docs/TEST\_PLAN.md}
+\begin{itemize}[leftmargin=8mm]
+\item[$\square$] \textbf{J2 handedness check before any power} (TEST\_PLAN to add): header in holes, drive plug on, continuity yellow wire $\to$ \texttt{+12V} pad; fit the header on whichever side passes
+\item[$\square$] Build the bus-simulator jig (TEST\_PLAN §0.6)
+\item[$\square$] Board 1: Phase 1 $\to$ 2 (incl. protection tests 2.7/2.8) $\to$ 3
+\item[$\square$] Boards 2–5: Phase 1 $\to$ 2 (2.1–2.6) $\to$ 3 (3.3.1–3.3.4)
+\item[$\square$] TEST\_PLAN 3.3.7 (design review F1): U1 input node on the terminated bus — $\le$ 0.5 V clean; 0.5–0.8 V $\to$ fit a 74HCT14 in U1 (socket swap) and re-measure
+\item[$\boxtimes$] Update docs/BOM.md and THEORY\_OF\_OPERATION.md to the r2 as-built values (done in 0.2.3; design-review corrections merged 2026-10-19)
+\end{itemize}
+\subsection*{v0.3 — decided, see docs/V0.3\_PLAN.md (starts after the v0.2.x test run)}
+\begin{itemize}[leftmargin=8mm]
+\item[$\square$] Four 8-bit common-cathode LED bar modules (one per drive) replace D1–D8
+\item[$\square$] 4 $\times$ 74HCT244 gated by the drive-select nodes; second 74LS14; 74LS123 for STEP/INDEX
+\item[$\square$] Six new bus lines: MOTOR ON, STEP, DIRECTION, TRACK 00, WRITE PROTECT, INDEX (each through 470 $\Omega$)
+\item[$\square$] Confirm module colour split and resistor value (Ven)
+\item[$\square$] Design-review carry-overs (V0.3\_PLAN): 74HCT14 receivers; pull-ups to the finger side of R14–R18, 100 k$\Omega$; 1N4148 in series with D12; D11 value per 2.4.2
+\item[$\square$] Optional plated variant of the clip holes (deferred)
+\end{itemize}
+\subsection*{Tooling}
+\begin{itemize}[leftmargin=8mm]
+\item[$\square$] Router: courtyard-aware silkscreen placement
+\item[$\square$] Router: DSN export so freerouting can be used for denser boards
+\item[$\square$] Rebuild \texttt{pdf/} (LuaLaTeX) whenever docs change — \texttt{python pdf/build\_pdf.py}
+\end{itemize}
+
+% ================================================================= 10 changelog
+\section{Changelog}
+\paragraph{v0.2.4 — 2026-10-19 — J2 on the component side}
+\begin{itemize}[leftmargin=8mm]
+\item \textbf{J2 moved to the component side}, right-angle, mating face at the recessed rear edge (TE Commercial Mate-N-Lok 1-641737-1; the vertical 350211-1 / LCSC C305826 fits the same pads and courtyard). Reason: JLCPCB's Economic PCBA is single-sided placement, and J2 was the only bottom-side part on the 0.2.3 order, so it came back unpopulated. All 45 placements are now Top.
+\item Pin 1 at the H1 (corner) end, x = 12.70, pins toward the board centre — the mirror of the solder-side layout, same ASSUMED header handedness; \texttt{J2\_PIN\_DIR} added so the end can be flipped from config. The bench continuity check (yellow wire $\to$ \texttt{+12V} pad) is now a TODO item and an ASSEMBLY.md step.
+\item Power row (F1, Q1, D11, C6, C4, R19, D12, R21, D13) moved from y 30.48 to 33.02 so the J2 labels (\texttt{1 +12V … 4 +5V}, "J2 PWR IN – SA400 pinout", below the housing) clear the Q1/F1 references; "12V"/"5V" silk moved with it. Component-side J2 pin-number/function labels of 0.2.2–0.2.3 and the solder-side labels are gone (nothing on the back now but the GND pour and the version text).
+\item Footprint renamed \texttt{MateNLok\_4\_RA} (was \texttt{MateNLok\_4\_RA\_350211-1}); J2 value \texttt{AMP 1-641737-1}; JLCPCB BOM leaves J2's LCSC blank (consign the right-angle part or match C305826 for the vertical one).
+\item Docs: THEORY §4.0 (why moving a header between sides mirrors pin 1), MECHANICAL, ASSEMBLY (handedness check), FABRICATION (Economic tier is enough), BOM, TODO. Copper re-routed by the generator (power row moved); DRC/ERC/links/F8 emulation re-verified.
+\item Merged from the bring-up session (same day, worked on the 0.2.2 tree): - Docs (2026-10-19): \texttt{docs/TEST\_PLAN.md} added — three-phase bring-up plan (unpowered, bench supply with bus-simulator jig and protection tests, on the Model I EI), written against the r2 as-built BOM. - Docs (2026-10-19, test plan 1.1): §0.7 populated-board wireframe + legend; \texttt{gen/render\_populated.py} draws it from \texttt{design.py}; \texttt{pdf/build\_test\_plan.py} builds the test-plan PDF (LuaLaTeX via pandoc). - Docs (2026-10-19, design review, test plan 1.2): receiver low-level margin found thinner than documented — THEORY §3.0 omitted the pull-up current through the 470 $\Omega$ (worst case $\approx$ 0.79 V at U1 vs V\_T− 0.5 V min); §3.0/§4.2/§4.3 corrected in red. TEST\_PLAN §0.8 lists the findings, adds 3.2.5/3.3.7 (U1 input node on the real bus), loosens 2.6.17 to < 0.45 V, and marks 2.7.2/2.7.4 as able to damage D12/D11. V0.3\_PLAN gains the carry-over fixes: 74HCT14 receivers, pull-ups on the finger side (100 k), 1N4148 with D12. \texttt{pdf/color\_spans.lua} renders the red/blue Markdown spans in the test-plan PDF. - Docs (2026-10-19, test plan 1.3): drawings moved out of the front matter into appendices — A board wireframe (+ legend on its back), B one-page schematic (\texttt{pdf/schematic.tex}, circuitikz, as-built values and DIP pin numbers), C as-built parts list; each appendix starts on a right-hand page for double-sided printing. Design-review section renumbered §0.8 $\to$ §0.7.
+\end{itemize}
+\paragraph{v0.2.3 — 2026-10-07 — Q1 silkscreen, as-built values, JLCPCB BOM}
+\begin{itemize}[leftmargin=8mm]
+\item \textbf{Q1 footprint:} the TO-220 silkscreen box and courtyard were drawn on the +y side of the pin row; a vertical TO-220 with pin 1 at −x stands over the pins with its metal tab at −y (Vishay TO-220 drawing, KiCad \texttt{TO-220-3\_Vertical}). JLCPCB's engineer queried the mismatch on their 3D render (2026-10-07); their render was electrically correct. Silk now shows the body outline, the tab line, "TAB", and G / D / S under the pads; F.Fab body added; courtyard y −3.4…+1.9. The component-side "J2 PWR IN" label moved from y 25.4 to 24.3 to clear the relocated Q1 reference. Copper, drills and outline unchanged.
+\item \textbf{As-built values:} R1–R8 and R21 1k5 $\to$ \textbf{470R}, R19 4k7 $\to$ \textbf{2k2} (standard-brightness LEDs from JLCPCB stock: L-53ID, WP7113GD, WP483YDT); Q1 value NDP6020P $\to$ \textbf{IRF4905PBF} (the G-D-S part JLCPCB stocks; NDP6020P stays the logic-level alternative). Schematic, BOM and theory of operation updated; +5 V budget $\approx$ 45 mA, +12 V indicator 4.5 mA.
+\item \textbf{JLCPCB BOM/CPL:} \texttt{build.py} now writes the LCSC numbers JLCPCB matched for the first order (\texttt{JLC} table) and lists the sockets as U1A/U2A/U3A; \texttt{verify.py} adds the three socket rows to the CPL at the IC positions, checks BOM $\leftrightarrow$ CPL (45 designators) and zips the gerbers as \texttt{output/sa400\_led\_monitor\_v0.2.3\_gerbers\_JLCPCB.zip}.
+\item Docs: FABRICATION (upload only the three files; order options; remark; how to answer an engineering query), ASSEMBLY (polarity table), BOM (LCSC column), MECHANICAL (Q1 geometry), TODO.
+\item History: the first PCBA order (2026-09-28) was cancelled because the whole project zip had been uploaded as the gerber file; re-ordered 2026-10-05 with the gerber zip + hand-edited r2 BOM/CPL, which this release reproduces from the generator.
+\end{itemize}
+\paragraph{v0.2.2 — 2026-09-08 — J2 labelling}
+\begin{itemize}[leftmargin=8mm]
+\item Docs (later the same day): \texttt{docs/V0.3\_PLAN.md} records the decided next board (LED-bar modules, 74HCT244 per drive, TTL); TODO.md v0.3 section updated; JLCPCB upload zip added to \texttt{output/}.
+\item Fix: \texttt{output/assembly/BOM\_jlcpcb.csv} and \texttt{CPL\_jlcpcb.csv} had been left over from v0.1 (34 parts, old positions). BOM is now written by \texttt{build.py}, CPL by \texttt{verify.py} from KiCad's position export, and the gate checks the two list the same designators (42 placements + 3 sockets).
+\item J2 now labelled on both sides: component side has pin numbers 1–4 above the pads and +12V / RTN / RTN / +5V below them; solder side (footprint silk, outside the housing) has "1 +12V 2 RTN 3 RTN 4 +5V" and "PWR IN - SA400 pinout - pin 1 square".
+\item Fix: the solder-side housing outline was mirrored (drawn behind the pins instead of toward the rear edge). Back-side geometry is now pre-mirrored so KiCad's flip lands it where designed; the library copy follows the same convention (library parity still clean).
+\end{itemize}
+\paragraph{v0.2.1 — 2026-09-08 — SA400 power usage restored, protection kept}
+\begin{itemize}[leftmargin=8mm]
+\item Logic powered from the PSU \textbf{+5 V} pin as on the SA400; +12 V pin lights a "12 V present" indicator. Chain: J2-4 $\to$ F1 PTC 0.5 A $\to$ Q1 NDP6020P P-MOSFET reverse-polarity switch (0.002 V drop) $\to$ +5 V with D11 1N5339B 5.6 V clamp, C6, C4. D13 "5 V" and D12 "12 V" indicators.
+\item Removed the 7805, 1N5819, P6KE18A, C5, C7 of v0.2.0. Series 470 $\Omega$ bus resistors retained.
+\item Fault table updated (THEORY §4.3). 47 footprints; DRC 0/0/0, ERC 0, links 47/47, F8 emulation clean.
+\item Six markdown docs (README, BOM, MECHANICAL, FABRICATION, ASSEMBLY, TODO) had been shipped empty since v0.1.3 by a versioning bug; all rebuilt, and \texttt{gen/verify.py} now fails on an empty doc.
+\end{itemize}
+\paragraph{v0.2.0 — 2026-09-08 — regulated power and bus protection}
+\begin{itemize}[leftmargin=8mm]
+\item Board now powered from \textbf{+12 V} (J2 pin 1) through F1 PTC 0.5 A $\to$ D9 1N5819 (reverse) $\to$ VIN (D10 P6KE18A TVS, C5 10 $\mu$F/25 V, C6 100 nF) $\to$ U4 7805 $\to$ +5 V (C7 100 nF, D11 1N5339B 5.6 V clamp, C4 10 $\mu$F). PSU +5 V pin unused; both returns to GND.
+\item 470 $\Omega$ series resistors R14–R18 between each monitored finger and its pull-up/receiver node (nets \texttt{DSn\_n} = finger, \texttt{DSn\_in} = receiver side). Worst-case current into an EI driver $\le$ 11 mA.
+\item Fault analysis in THEORY\_OF\_OPERATION §4; BOM, schematic, placement, routing regenerated.
+\item 47 footprints; KiCad 10 DRC 0/0/0, ERC 0, links 47/47, F8 emulation clean.
+\end{itemize}
+\paragraph{v0.1.4 — 2026-09-08}
+\begin{itemize}[leftmargin=8mm]
+\item F8 (\emph{Update PCB from Schematic}) on v0.1.3 matched every part but still listed three metadata updates per footprint: sheetname, sheetfile and "unit metadata" (KiCad 10's per-unit pin list used for gate swapping). \texttt{gen/postprocess.py} now writes all three, taking the unit/pin lists from KiCad's own netlist export so they compare equal in the updater.
+\item \texttt{gen/verify.py} step 5b emulates the updater's dry-run comparisons (footprint id, value, sheetname, sheetfile, unit pin lists) from the exported netlist; a negative test confirms it flags a board that lacks the metadata.
+\item Board file otherwise unchanged; all outputs regenerated.
+\end{itemize}
+\paragraph{v0.1.3 — 2026-09-07}
+\begin{itemize}[leftmargin=8mm]
+\item \textbf{Fix:} footprint links used \texttt{/<root-sheet-uuid>/<symbol-uuid>}; KiCad's root-sheet form is \texttt{/<symbol-uuid>} (checked against KiCad 10's own \texttt{demos/ecc83}). v0.1.2 therefore still offered to add every part in \emph{Update PCB from Schematic}. Corrected; \texttt{gen/verify.py} now checks this form.
+\item \texttt{gen/verify.py} added: build $\to$ KiCad postprocess $\to$ DRC+parity $\to$ ERC $\to$ link check $\to$ gerber/drill plot, nonzero exit on any failure. Nothing is packaged unless it passes.
+\item Not headlessly testable: the F8 dialog itself — run it once after opening the project.
+\item Docs (2026-09-08): per-side copper views (\texttt{output/copper\_top.png}, \texttt{copper\_bottom.png}) and isolated GND / +5V net images (\texttt{output/net\_gnd.png}, \texttt{net\_5v.png}, from \texttt{gen/render\_nets.py}) added to the design PDF; the raytraced renders hide copper under the mask and had prompted a false "no ground" read.
+\end{itemize}
+\paragraph{v0.1.2 — 2026-09-07}
+\begin{itemize}[leftmargin=8mm]
+\item Footprints now carry \texttt{(path "/<root>/<symbol-uuid>")} links to deterministic schematic symbol UUIDs (\texttt{uuid5(ref)}), so \textbf{Update PCB from Schematic} reports no changes instead of trying to add every part again. Verified: 34/34 linked, KiCad 10 DRC parity 0, ERC 0.
+\item \texttt{docs/ASSEMBLY.md} + \texttt{output/assembly/} (JLCPCB BOM/CPL, KiCad position file).
+\item All fab outputs, renders and the design PDF regenerated as v0.1.2.
+\end{itemize}
+\paragraph{v0.1.1 — 2026-09-07}
+Verification pass with KiCad 10.0.6 (kicad-cli DRC/ERC, pcbnew API).
+
+\begin{itemize}[leftmargin=8mm]
+\item Finger copper set back 0.66 mm from the insertion edge (3M .026; JLCPCB bevel rule $\ge$ 0.6 mm).
+\item Pull-ups spaced to 5.08 mm, LED pairs to 7.62 mm (courtyards were overlapping).
+\item No-connect pads carry KiCad's \texttt{unconnected-(…)} nets $\to$ schematic parity exact.
+\item All footprints moved into the project library \texttt{sa400.pretty}; symbols into \texttt{sa400.kicad\_sym} with project lib tables.
+\item J2 written front-side and flipped by KiCad itself (\texttt{gen/postprocess.py}), which also fills the GND zone and saves the board in native KiCad 10 format.
+\item J2 pins 3/4 typed power\_out so ERC sees the supply; symbol placement snapped to 1.27 mm.
+\item Silkscreen: 0.8 mm text, cap outlines off the pads, labels de-overlapped.
+\item Result: DRC 0 / unconnected 0 / parity 0, ERC 0. Gerbers, drills, STEP re-exported from 10.0.6.
+\end{itemize}
+\paragraph{v0.1.0 — 2026-09-05}
+First complete design.
+
+\begin{itemize}[leftmargin=8mm]
+\item Board 5.5 $\times$ 5.0 in, rear edge recessed 11.43 mm, J1 tab per 3M TS-0010-14 (45.59 mm, 1.40 mm contacts, 10.16 mm long, R1.02 corners), key slot 0.91 $\times$ 11.43 between pins 4/6, two Ø1.6 NPTH clip holes on the root line under pins 2 and 34, pin 2 5.08 mm from the corner.
+\item J2 AMP 350211-1 on the solder side, +5 V only.
+\item 74LS14 receivers + 10k pull-ups, 74LS06 $\to$ red (DSn), 74LS00 $\to$ green (DSn·WG), 1k5 LEDs.
+\item Generated KiCad 7-format project (opens in 9), validated by kicad-cli 7.0.11: gerbers and drills plotted, schematic netlist matches PCB 111/111 pins.
+\item Python maze router, 0.30 mm clearance, independent geometric DRC clean.
+\item Docs: THEORY\_OF\_OPERATION, BOM, CABLE (6-connector Model I cable), MECHANICAL, FABRICATION.
+\end{itemize}
+1. notches $\to$ full-length rear recess; 2. all 34 fingers restored; 3. key slot cut, full
+
+finger depth; 4. tab width 45.59 per 3M; 5. clip holes moved onto the root line, non-plated.
+
+
+% ================================================================= 11 references
+\section{References}
+\begin{enumerate}[leftmargin=8mm]
+\item Shugart SA400L Minifloppy OEM Manual, P/N 39019-1, Nov 1982 --- \S3.2 pinout, \S3.2.1 electrical,
+\S3.3 J2, fig 3-2 card edge.\\ \url{https://www.bitsavers.org/pdf/shugart/SA400/39019-1_SA400L_OEM_Manual_Nov82.pdf}
+\item Shugart SA400 Service Manual, P/N 54096-2, Apr 1979 --- schematics, parts catalogue (PCB clamps 54036).\\
+\url{https://archive.org/details/bitsavers_shugartSA4eApr79_4138915}
+\item 3M Card-Edge .100 in Connector, TS-0010-14 --- recommended PCB layout for the 3463.\\
+\url{https://multimedia.3m.com/mws/media/22013O/3m-tm-100-in-card-edge-connector-w-o-mounting-flng-ts0010.pdf}
+\item TEAC FD-55 Specification --- fig 103 card-edge dimensions (cross-check).\\
+\url{https://deramp.com/downloads/floppy_drives/teac/TEAC\%20FD-55GFR.pdf}
+\item JLCPCB gold-finger design rules. \url{https://jlcpcb.com/help/article/jlcpcb-gold-fingers}
+\item TI SN74LS14 / SN74LS00 / SN74LS06 datasheets. \url{https://www.ti.com/product/SN74LS14}
+\item KiCad 10.0.6. \url{https://www.kicad.org/download/}
+\end{enumerate}
+
+\clearpage
+% ================================================================= appendix
+\appendix
+\section{Appendix: gen/config.py}
+Every dimension used by the generator, with its source.
+\lstinputlisting[language=Python]{../gen/config.py}
+
+\end{document}

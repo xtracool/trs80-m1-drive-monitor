@@ -1,0 +1,10 @@
+(footprint "MountingHole_3.2mm_M3"
+    (version 20221018) (generator sa400_gen)
+    (descr "Mounting hole, M3 / #4-40 clearance, non-plated")
+    (attr through_hole)
+    (fp_text reference "H1" (at 0 -4.5) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))) (tstamp 89bd647d-b273-4309-8840-e89e9f676ed6))
+    (fp_text value "M3" (at 0 -3) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))) (tstamp b04a0e99-cd9c-4d15-aa13-6a0fdcb7f775))
+    (fp_circle (center 0 0) (end 3.3 0) (stroke (width 0.12) (type solid)) (fill none) (layer "F.SilkS") (tstamp 1dd5dd3f-a5f7-4add-b30a-12cc6fd4d9b2))
+    (fp_rect (start -3.5 -3.5) (end 3.5 3.5) (stroke (width 0.05) (type solid)) (fill none) (layer "F.CrtYd") (tstamp 3ba4dc10-f834-4106-a454-d48029eb1f2e))
+    (pad "" np_thru_hole circle (at 0 0) (size 3.2 3.2) (drill 3.2) (layers "*.Cu" "*.Mask") (tstamp c0362b51-f214-4206-a051-b1260b3babf4))
+)

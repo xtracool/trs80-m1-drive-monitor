@@ -1,0 +1,19 @@
+# KiCad per-user / transient
+*.kicad_prl
+*-backups/
+fp-info-cache
+*.lck
+# Python
+__pycache__/
+*.pyc
+# LaTeX intermediates
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+# Packaged copies of this tree (rebuilt on version bump; keep on the desktop, not in git)
+sa400-led-monitor_handoff_*.zip
+sa400_led_monitor_v*.zip
+_superseded/

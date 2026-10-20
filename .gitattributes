@@ -1,0 +1,24 @@
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+*.ps1 text eol=crlf
+*.kicad_pcb text eol=lf
+*.kicad_sch text eol=lf
+*.kicad_sym text eol=lf
+*.kicad_mod text eol=lf
+*.kicad_pro text eol=lf
+*.gbr -text
+*.gbl -text
+*.gtl -text
+*.gbs -text
+*.gts -text
+*.gbo -text
+*.gto -text
+*.gm1 -text
+*.drl -text
+*.gbrjob -text
+*.csv -text
+*.zip binary
+*.pdf binary
+*.png binary
+*.step binary

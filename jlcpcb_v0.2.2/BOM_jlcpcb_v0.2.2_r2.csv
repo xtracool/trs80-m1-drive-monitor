@@ -1,0 +1,18 @@
+Comment,Designator,Footprint,LCSC Part #,Manufacturer part / notes
+100nF,"C1,C2,C3,C6",C_Disc_D5.0mm_P2.50mm,C45664,100nF 50V ceramic disc (2.0mm pitch is OK on the 2.54mm pads)
+10uF/16V,C4,CP_Radial_D5.0mm_P2.50mm,C53330112,10uF 16V radial 5mm; + lead in the square pad
+RED,"D1,D2,D3,D4",LED_D5.0mm,C598429,Kingbright L-53ID 5mm red; cathode = square pad
+GREEN,"D5,D6,D7,D8",LED_D5.0mm,C7117617,Kingbright WP7113GD 5mm green; cathode = square pad
+1N5339B,D11,D_DO-15_P10.16mm_Vertical,C5444832,Zener 5.6V 5W; band (cathode) = square pad
+YELLOW,"D12,D13",LED_D5.0mm,C6001325,Kingbright WP483YDT 5mm yellow; cathode = square pad
+PTC 0.5A,F1,Fuse_Radial_P5.08mm,C135425,A72-050 PTC resettable fuse 0.5A hold
+AMP 350211-1,J2,MateNLok_4_RA_350211-1,C305826,TE 350211-1 Mate-N-Lok 4-pos RA header; BOTTOM side; pin 1 = square pad
+IRF4905PBF,Q1,TO-220-3_Vertical,C2564,P-MOSFET TO-220 pin order G-D-S; gate = square pad
+10k,"R9,R10,R11,R12,R13",R_Axial_DIN0207_P7.62mm_Vertical,C176451,YAGEO MFR-25JT-52-10K 1/4W 5% (bus pull-ups)
+470R,"R1,R2,R3,R4,R5,R6,R7,R8,R21",R_Axial_DIN0207_P7.62mm_Vertical,C176518,YAGEO MFR-25JT-52-470R 1/4W 5% (LED series - standard-brightness LEDs)
+470R,"R14,R15,R16,R17,R18",R_Axial_DIN0207_P7.62mm_Vertical,C176518,YAGEO MFR-25JT-52-470R 1/4W 5% (bus series / fault limiting)
+2k2,R19,R_Axial_DIN0207_P7.62mm_Vertical,C172997,YAGEO MFR-25FTE52-2K2 1/4W 1% (+12V indicator series)
+74LS14,U1,DIP-14_W7.62mm,C73064,TI SN74LS14N; fit into socket U1A
+74LS00,U2,DIP-14_W7.62mm,C181629,TI SN74LS00N; fit into socket U2A
+74LS06,U3,DIP-14_W7.62mm,C22384767,TI SN74LS06N(LX); fit into socket U3A
+DIP-14 socket,"U1A,U2A,U3A",DIP-14_W7.62mm,C190815,DIP-14 socket soldered under U1/U2/U3 (same positions as the ICs)

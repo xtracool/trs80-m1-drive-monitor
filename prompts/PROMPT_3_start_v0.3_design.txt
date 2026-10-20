@@ -1,0 +1,15 @@
+Start the v0.3 design from docs\V0.3_PLAN.md (LED-bar modules, TTL — no microcontroller). Confirmed inputs:
+
+<fill in:
+ - LED-bar module colour split per module (which bits are red / blue) and the on-board resistor marking ("202" = 2 kΩ?)
+ - J2 part decision: right-angle TE 1-641737-1 (consign) or vertical 350211-1 (LCSC C305826)
+ - whether the design-review fixes F1–F4 are all in (default: yes — 74HCT14 receivers, 100 kΩ pull-ups on the finger side, 1N4148 with D12, D11 per test 2.4.2)
+ - any test-plan finding that changes the plan>
+
+Work in this order, and stop for my OK at each step:
+1. Architecture and bit assignment: one page in docs\V0.3_PLAN.md turned into a THEORY_OF_OPERATION §5 draft — signals, gating, the 74LS123 pulse-stretch values, current budget, and the EI fault analysis extended to 11 taps. Ask anything that is not settled rather than assuming.
+2. Placement-only preview (gen\render_placement.py) before routing: four 9-pin module headers along the front edge, same J1/J2/protection front end as v0.2.4, outline and mounting unchanged. I want to see it before you route.
+3. Route, verify.py clean, outputs.py, BOM with LCSC numbers where JLCPCB stocks the part (74HCT14/74HCT244/74LS123 — look them up), docs and PDF, version 0.3.0.
+4. Fab set: gerber zip + BOM + CPL only, FABRICATION.md updated (Economic PCBA, all parts on top).
+
+Same ground rules as the kickoff prompt: generator is the source of truth, every change through verify.py, docs are part of the deliverable, Windows paths, ask before anything expensive or ambiguous.

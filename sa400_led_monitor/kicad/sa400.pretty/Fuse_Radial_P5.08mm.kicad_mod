@@ -1,0 +1,11 @@
+(footprint "Fuse_Radial_P5.08mm"
+    (version 20221018) (generator sa400_gen)
+    (descr "Resettable fuse on the +5 V input")
+    (attr through_hole)
+    (fp_text reference "F1" (at 0 -3.7) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))) (tstamp 592724af-e9e3-4c0d-a294-f4fa293d266f))
+    (fp_text value "PTC 0.5A" (at 0 -2.2) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))) (tstamp b6436d47-041d-44b6-ad99-f61211338fc6))
+    (fp_rect (start -4.44 -2.3) (end 4.44 2.3) (stroke (width 0.12) (type solid)) (fill none) (layer "F.SilkS") (tstamp 93d243b2-358f-4ffb-99f2-d1ebe125f566))
+    (fp_rect (start -4.84 -2.7) (end 4.84 2.7) (stroke (width 0.05) (type solid)) (fill none) (layer "F.CrtYd") (tstamp 66ca7212-7807-4a88-bade-3b05fc629d64))
+    (pad "1" thru_hole rect (at -2.54 0) (size 1.8 1.8) (drill 1) (layers "*.Cu" "*.Mask") (tstamp ba3ec029-2d59-4f69-b0c4-971939972cc7))
+    (pad "2" thru_hole circle (at 2.54 0) (size 1.8 1.8) (drill 1) (layers "*.Cu" "*.Mask") (tstamp e0b20030-5cce-405e-822d-9d3528af86ea))
+)

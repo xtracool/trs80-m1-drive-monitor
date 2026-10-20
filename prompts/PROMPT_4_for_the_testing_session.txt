@@ -1,0 +1,5 @@
+Add one step to docs\TEST_PLAN.md before the first power-up (Phase 1, before 1.2 or as 1.1.6a) and rebuild the test-plan PDF:
+
+J2 handedness check — header pushed into its holes (not soldered), drive power plug fitted, DMM continuity from the plug's yellow (+12 V) wire to the pad printed "+12V" (the square pad). Pass: solder the header on the solder side as drawn. Fail (yellow lands on "+5V"): do NOT solder — fit the header on the component side instead (the mapping mirrors when a header changes sides) and record the result; it also sets J2_PIN1_X / J2_PIN_DIR for the v0.2.4 layout. Reason: the SA400 pinout fixes which plug pin carries +12 V, but which END of the footprint header pin 1 lands on depends on the header's own construction, which was never verified; the keyed plug does not protect against that. See docs\ASSEMBLY.md §Polarity (written by the design session on 2026-10-19).
+
+Also note in the plan that JLCPCB left J2 unpopulated on all five boards (Economic PCBA is single-sided), so step 1.1.6 ("J2 is on the solder side, seated flat") becomes "J2 fitted by hand after the handedness check".

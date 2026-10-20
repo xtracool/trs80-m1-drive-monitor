@@ -1,0 +1,12 @@
+(footprint "CP_Radial_D5.0mm_P2.50mm"
+    (version 20221018) (generator sa400_gen)
+    (descr "Bulk decoupling on +5 V")
+    (attr through_hole)
+    (fp_text reference "C4" (at 0 -4.07) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))) (tstamp ef2c3889-202b-4c0c-99b3-bd9c787970de))
+    (fp_text value "10uF/16V" (at 0 -2.57) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))) (tstamp d06b5927-ea62-43c9-8793-fd40fd984dd2))
+    (fp_circle (center 0 0) (end 2.6 0) (stroke (width 0.12) (type solid)) (fill none) (layer "F.SilkS") (tstamp 610bf960-b70d-46e6-9cab-f6f277e38c2a))
+    (fp_text user "+" (at 2.2 -3.67) (layer "F.SilkS") (effects (font (size 0.8 0.8) (thickness 0.12))) (tstamp a7326263-c948-4290-b32a-a388a62c1e58))
+    (fp_rect (start -3 -3.07) (end 3 3.07) (stroke (width 0.05) (type solid)) (fill none) (layer "F.CrtYd") (tstamp 4386aa7b-e606-4780-83c8-f46d9a7d1923))
+    (pad "1" thru_hole rect (at 0 -1.27) (size 1.6 1.6) (drill 0.8) (layers "*.Cu" "*.Mask") (tstamp 06f2e59e-9e0c-42d2-b824-f6d258ddcd20))
+    (pad "2" thru_hole circle (at 0 1.27) (size 1.6 1.6) (drill 0.8) (layers "*.Cu" "*.Mask") (tstamp 5c0573f5-0219-49c9-beb0-5e4cc329c0ee))
+)

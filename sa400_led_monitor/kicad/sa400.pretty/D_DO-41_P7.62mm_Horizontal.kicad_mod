@@ -1,0 +1,12 @@
+(footprint "D_DO-41_P7.62mm_Horizontal"
+    (version 20221018) (generator sa400_gen)
+    (descr "Series Schottky - reverse-polarity protection")
+    (attr through_hole)
+    (fp_text reference "D9" (at 0 -2.9) (layer "F.SilkS") (effects (font (size 1 1) (thickness 0.15))) (tstamp 372b0fbf-a3a7-48db-97e1-fb3d730c64d8))
+    (fp_text value "1N5819" (at 0 -1.4) (layer "F.Fab") (effects (font (size 1 1) (thickness 0.15))) (tstamp f61a021b-0704-4256-8070-08fa79939071))
+    (fp_rect (start -2.21 -1.4) (end 2.21 1.4) (stroke (width 0.12) (type solid)) (fill none) (layer "F.SilkS") (tstamp 85e132d6-26fb-4b14-be48-26dd351fb1c8))
+    (fp_line (start 2.21 -1.4) (end 2.21 1.4) (stroke (width 0.12) (type solid)) (layer "F.SilkS") (tstamp 40f0745d-85df-4634-9756-352c0f9057c3))
+    (fp_rect (start -5.11 -1.9) (end 5.11 1.9) (stroke (width 0.05) (type solid)) (fill none) (layer "F.CrtYd") (tstamp a0c031f3-8822-453a-8e95-dca5bd59f3cd))
+    (pad "1" thru_hole rect (at 3.81 0) (size 1.8 1.8) (drill 1) (layers "*.Cu" "*.Mask") (tstamp 4d1c60d3-e661-43cf-a0f1-6a1369e3c58e))
+    (pad "2" thru_hole circle (at -3.81 0) (size 1.8 1.8) (drill 1) (layers "*.Cu" "*.Mask") (tstamp e569bc1a-8e8e-40ea-a9fa-e53b0587dcef))
+)
