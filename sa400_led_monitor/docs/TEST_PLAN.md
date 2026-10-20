@@ -1,8 +1,6 @@
-# Test Plan — SA400 Drive-Select / Write-Gate LED Monitor
+# Test Plan — TRS-80 Model I / Shugart Drive Monitor
 
-Document: `TEST_PLAN.md` · Project: `sa400_led_monitor` · Test-plan version **1.6** · created 2026-10-19 · updated 2026-10-19
-
-Revisions: 1.1 populated-board drawing and legend · 1.2 design-review findings folded in (§0.7, 2.6.17, 2.7.2, 2.7.4, 3.2.5, 3.3.7, §4, §5.3) · 1.3 drawings moved to appendices — A.1 board wireframe, A.2 legend, B schematic, C parts list — each on its own sheet (blank back) for double-sided printing · 1.4 Appendix D test-fixture drawings (jig, power pigtail, key plug) and Appendix E cable drawing · 1.5 J2 handedness check 1.1.6a before any power; J2 is hand-fitted (JLCPCB left it off); repo workflow · 1.6 only A.1, A.2, B and C have blank backs; D and E share a sheet
+Document: `docs/TEST_PLAN.md` · Project: **trs80-m1-drive-monitor** (https://github.com/xtracool/trs80-m1-drive-monitor), board `sa400_led_monitor` · Test-plan version **1.7** · created 2026-10-19 · updated 2026-10-19 · revision history: Appendix F
 
 Colour key: <span style="color:#b00000">**red** = a stop condition, a limit not to exceed, or a correction to an earlier document</span> · <span style="color:#0040a0">**blue** = new or changed since revision 1.2 (the 2026-10-19 design review; 1.5 = the J2 handedness check)</span>
 
@@ -143,6 +141,36 @@ and U1's fan-out.
 Board fully assembled, ICs in their sockets, nothing plugged into J1 or J2. Hold the DMM leads still while
 a reading settles, because the capacitors charge through the meter.
 
+### 1.0 How a meter measures anything on an unpowered board
+
+<span style="color:#0040a0">Nothing in Phase 1 is powered by a supply. **The meter is the power source.** In the ohms, continuity and
+diode ranges a DMM pushes a small current out of one probe, through whatever is between the probes, back into
+the other probe, and reads the voltage that results. The current comes from the meter's own battery and is
+tiny (roughly 0.1–1 mA, open-circuit voltage about 1–3 V depending on the meter), so it cannot hurt the board.</span>
+
+- <span style="color:#0040a0">**Ohms (Ω).** The meter forces a known current and shows V/I as a resistance. Good for resistors and wires.
+  Across a capacitor the reading climbs while the capacitor charges from that current — that is why you hold
+  the probes still until it settles (1.2.4). Across a diode or an IC pin the number depends on the meter's
+  test current, so it is not meaningful; use diode mode for those.</span>
+- <span style="color:#0040a0">**Continuity (the beeper, usually the same dial position as diode mode or the lowest ohms range).** Ohms with
+  a buzzer that sounds below a threshold, typically 20–50 Ω. Used for "is this pad connected to that pad".</span>
+- <span style="color:#0040a0">**Diode mode (the ▷| symbol on the dial; on many meters the same position as continuity, and a
+  SELECT / FUNC button toggles between beeper and diode).** The meter forces about 1 mA and **displays the
+  voltage across the probes in volts**. A silicon junction conducting forward shows ≈ 0.5–0.7 V; a Schottky
+  ≈ 0.2–0.4 V; an LED ≈ 1.6–2.2 V and usually glows faintly; a junction that is reverse-biased, or anything
+  open, shows **OL** (the meter's few volts are not enough to break it over; a 5.6 V Zener in reverse reads OL
+  too). So "0.4–0.7 V" in 1.3 and "1.5–2.1 V" in 1.5 are forward drops at the meter's 1 mA, not supply
+  voltages. In circuit, parallel paths can lower a reading; the tables already allow for that.</span>
+- <span style="color:#0040a0">**Polarity.** In ohms and diode mode the **red** probe is the meter's positive output on practically every
+  modern DMM, so a diode reads its forward drop with red on the anode, black on the cathode. A few older or
+  cheap meters are reversed. Check yours once before 1.3: put red on the anode (round pad) and black on the
+  cathode (square pad) of any LED on the board, D13 say. If it reads 1.5–2.2 V (and glows), the polarity is
+  as assumed; if that way reads OL and the swapped way reads the voltage, your meter is reversed and you swap
+  "red" and "black" everywhere in 1.3 and 1.5.</span>
+- <span style="color:#0040a0">**No diode mode on your meter?** Use the 2 kΩ or 20 kΩ range instead. A junction then reads something in
+  the hundreds of ohms to a few kΩ one way and OL the other; the number itself means nothing, the asymmetry
+  is the result. The pass criteria in 1.3 become "low one way, OL the other", same lead placement.</span>
+
 ### 1.1 Visual and mechanical
 
 | # | Check | Pass |
@@ -201,6 +229,8 @@ DMM in ohms unless stated. "OL" = open / over-range.
 
 ### 1.3 Reverse-polarity switch (Q1) orientation — diode mode
 
+<span style="color:#0040a0">Diode mode: see 1.0. The meter supplies the volt or so needed; the board is unpowered. Readings are the forward drop of a junction at the meter's test current.</span>
+
 | # | Red lead | Black lead | Expect | Proves |
 |---|---|---|---|---|
 | 1.3.1 | Q1 pin 2 (drain) | Q1 pin 3 (source / rail) | 0.4–0.7 V | Body diode points from input to rail, so Q1 is fitted the right way round |
@@ -226,6 +256,8 @@ This is the core "cannot hurt the EI" check with no power applied.
 | 1.4.8 | Each monitored finger and J2-1 (+12) | **OL** — 12 V has no path to the bus |
 
 ### 1.5 LEDs in circuit — diode mode
+
+<span style="color:#0040a0">Diode mode again (1.0); the glow comes from the meter's ≈ 1 mA.</span>
 
 Red lead on the anode (round pad), black lead on the cathode (square pad). Most DMMs light a red or yellow
 LED faintly. Some can't light green.
@@ -658,3 +690,19 @@ Off-board parts for the test run (not on the board). Drawings: Appendix D (jig, 
 ## Appendix E — Six-connector cable for Phase 3
 
 ![TRS-80 Model I six-connector floppy cable, straight-through, with the DIAG connector second so the terminated drive stays at the far end. `output/cable.png`, built by `gen/build.py`; build notes and the pulled-pin variant in `docs/CABLE.md`.](../output/cable.png){width=100%}
+
+## Appendix F — Revision history of this test plan
+
+| Version | Date | Change |
+|------|----------|--------------------------------------------------------------|
+| 1.0 | 2026-10-19 | First issue: three phases (unpowered, bench supply + jig, on the EI), record sheets |
+| 1.1 | 2026-10-19 | Populated-board wireframe and legend |
+| 1.2 | 2026-10-19 | Design-review findings F1–F4 folded in (§0.7, 2.6.17, 2.7.2, 2.7.4, 3.2.5, 3.3.7, §4, §5.3); red/blue colour key |
+| 1.3 | 2026-10-19 | Drawings moved to appendices: A.1 board wireframe, A.2 legend, B schematic (new, circuitikz), C parts list; each on its own sheet |
+| 1.4 | 2026-10-19 | Appendix D test-fixture drawings (jig, power pigtail, key plug), Appendix E cable drawing |
+| 1.5 | 2026-10-19 | J2 handedness check 1.1.6a before any power; J2 hand-fitted (JLCPCB left it off all five boards); board drawing frozen at v0.2.3; GitHub repo is the hand-off point |
+| 1.6 | 2026-10-19 | Only A.1, A.2, B and C have blank backs; D and E share a sheet |
+| 1.7 | 2026-10-19 | <span style="color:#0040a0">Renamed for the repo (trs80-m1-drive-monitor); §1.0 explains ohms / continuity / diode mode and meter polarity for the unpowered checks; revision history moved here</span> |
+
+The plan is built from `docs/TEST_PLAN.md` by `pdf/build_test_plan.py` (pandoc + LuaLaTeX); each build's PDF is
+`pdf/trs80-m1-drive-monitor_test_plan_v<version>.pdf` and a copy sits at the top of the repo.

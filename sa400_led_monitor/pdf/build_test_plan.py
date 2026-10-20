@@ -1,5 +1,5 @@
 """
-build_test_plan.py — docs/TEST_PLAN.md -> sa400_led_monitor_test_plan_v<ver>.pdf (LuaLaTeX via pandoc).
+build_test_plan.py — docs/TEST_PLAN.md -> trs80-m1-drive-monitor_test_plan_v<ver>.pdf (LuaLaTeX via pandoc).
 
 The board drawing in the plan is the FROZEN docs/img/board_populated_v<BOARD_REV>.pdf of the boards in hand
 (BOARD_REV below). gen/render_populated.py draws the current design (config.VERSION), which may be a newer
@@ -19,7 +19,7 @@ Steps:
   4. lualatex x3 (LastPage needs the extra passes)
 
 Usage (from the project root, needs pandoc + LuaLaTeX with fontspec/fancyhdr/lastpage):
-    python pdf/build_test_plan.py              -> pdf/sa400_led_monitor_test_plan_v<VERSION>.pdf
+    python pdf/build_test_plan.py              -> pdf/trs80-m1-drive-monitor_test_plan_v<VERSION>.pdf
     python pdf/build_test_plan.py --keep-tex   -> also leaves the .tex beside it
     python pdf/build_test_plan.py --render     -> re-draw the board first (only if the design is still BOARD_REV)
 
@@ -32,7 +32,7 @@ import shutil
 import subprocess
 import sys
 
-VERSION = "1.6"
+VERSION = "1.7"
 BOARD_REV = "0.2.3"      # the boards the plan is written for; the frozen drawing docs/img/board_populated_v0.2.3.*
 CREATED = "2026-10-19"
 UPDATED = "2026-10-19"
@@ -40,7 +40,7 @@ UPDATED = "2026-10-19"
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 DOCS = os.path.join(ROOT, "docs")
-NAME = f"sa400_led_monitor_test_plan_v{VERSION}"
+NAME = f"trs80-m1-drive-monitor_test_plan_v{VERSION}"
 
 HEADER = r"""
 \usepackage{xcolor}
@@ -56,8 +56,8 @@ HEADER = r"""
 \usepackage{lastpage}
 \usepackage{etoolbox}
 \newcommand{\tpfoot}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\renewcommand{\footrulewidth}{0.4pt}%
-\fancyfoot[L]{\footnotesize TEST\_PLAN --- SA400 LED Monitor Test Plan · Version VER}%
-\fancyfoot[R]{\footnotesize Created CRE · Updated UPD · Page \thepage\ of \pageref*{LastPage}}}
+\fancyfoot[L]{\scriptsize trs80-m1-drive-monitor · TEST\_PLAN · Version VER}%
+\fancyfoot[R]{\scriptsize Created CRE · Updated UPD · Page \thepage\ of \pageref*{LastPage}}}
 \pagestyle{fancy}\tpfoot
 \fancypagestyle{plain}{\tpfoot}
 \AtBeginEnvironment{longtable}{\footnotesize}
@@ -136,7 +136,7 @@ def main():
     s = before_heading(s, "Appendix C ---", "\\cleardoublepage")
     s = before_heading(s, "Appendix D ---", "\\cleardoublepage")
     s = before_heading(s, "Appendix E ---", "\\clearpage\\begin{landscape}")   # wide, short drawing; shares D's sheet
-    s = s.replace("\\end{document}", "\\end{landscape}\n\\end{document}")
+    s = before_heading(s, "Appendix F ---", "\\end{landscape}\\clearpage")           # E's landscape ends before F
     s = re.sub(r"\\includegraphics\[[^\]]*\]\{(\.\./output/cable\.png)\}",
                r"\\includegraphics[width=\\linewidth]{\1}", s)
     open(tex, "w", encoding="utf-8").write(s)
