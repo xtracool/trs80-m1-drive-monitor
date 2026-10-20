@@ -1,8 +1,12 @@
 """
 build_test_plan.py — docs/TEST_PLAN.md -> sa400_led_monitor_test_plan_v<ver>.pdf (LuaLaTeX via pandoc).
 
+The board drawing in the plan is the FROZEN docs/img/board_populated_v<BOARD_REV>.pdf of the boards in hand
+(BOARD_REV below). gen/render_populated.py draws the current design (config.VERSION), which may be a newer
+revision; it is only re-run here when --render is given and config.VERSION == BOARD_REV.
+
 Steps:
-  1. gen/render_populated.py  -> docs/img/board_populated.png/.pdf (wireframe board drawing)
+  1. (--render only) gen/render_populated.py -> docs/img/board_populated_v<ver>.png/.pdf
   1b. lualatex pdf/schematic.tex and pdf/fixtures.tex -> docs/img/*.pdf (+ .png via pdftoppm for the Markdown)
   2. pandoc TEST_PLAN.md -> standalone .tex (DejaVu Sans, footer on every page:
      document name, version, created/updated date, Page X of Y); color_spans.lua turns the
@@ -14,8 +18,9 @@ Steps:
   4. lualatex x3 (LastPage needs the extra passes)
 
 Usage (from the project root, needs pandoc + LuaLaTeX with fontspec/fancyhdr/lastpage):
-    python pdf/build_test_plan.py              -> pdf/sa400_led_monitor_test_plan_v1.1.pdf
+    python pdf/build_test_plan.py              -> pdf/sa400_led_monitor_test_plan_v<VERSION>.pdf
     python pdf/build_test_plan.py --keep-tex   -> also leaves the .tex beside it
+    python pdf/build_test_plan.py --render     -> re-draw the board first (only if the design is still BOARD_REV)
 
 Exit codes: 0 ok, 1 error, 130 interrupted (Ctrl-C).
 """
@@ -26,7 +31,8 @@ import shutil
 import subprocess
 import sys
 
-VERSION = "1.4"
+VERSION = "1.5"
+BOARD_REV = "0.2.3"      # the boards the plan is written for; the frozen drawing docs/img/board_populated_v0.2.3.*
 CREATED = "2026-10-19"
 UPDATED = "2026-10-19"
 
@@ -69,11 +75,21 @@ def run(cmd, cwd):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--keep-tex", action="store_true")
+    ap.add_argument("--render", action="store_true", help="re-draw the board with gen/render_populated.py")
     args = ap.parse_args()
 
-    run([sys.executable, os.path.join(ROOT, "gen", "render_populated.py"), "--out", os.path.join(DOCS, "img")], ROOT)
     img = os.path.join(DOCS, "img")
     os.makedirs(img, exist_ok=True)
+    frozen = os.path.join(img, f"board_populated_v{BOARD_REV}.pdf")
+    if args.render:
+        sys.path.insert(0, os.path.join(ROOT, "gen"))
+        import config  # noqa: E402  (the design's single source of truth)
+        if config.VERSION != BOARD_REV:
+            raise RuntimeError(f"design is v{config.VERSION}, the plan covers the v{BOARD_REV} boards: "
+                               f"keeping the frozen drawing {os.path.basename(frozen)} (drop --render)")
+        run([sys.executable, os.path.join(ROOT, "gen", "render_populated.py"), "--out", img], ROOT)
+    if not os.path.exists(frozen):
+        raise RuntimeError(f"missing {frozen}; run with --render on a v{BOARD_REV} checkout")
     for drawing in ("schematic", "fixtures"):
         run(["lualatex", "-interaction=nonstopmode", drawing + ".tex"], HERE)
         shutil.move(os.path.join(HERE, drawing + ".pdf"), os.path.join(img, drawing + ".pdf"))
@@ -96,10 +112,10 @@ def main():
          "--columns=60"], DOCS)
 
     s = open(tex, encoding="utf-8").read()
-    s = s.replace("img/board_populated.png", "img/board_populated.pdf")
+    s = s.replace(f"img/board_populated_v{BOARD_REV}.png", f"img/board_populated_v{BOARD_REV}.pdf")
     s = s.replace("img/schematic.png", "img/schematic.pdf")
     s = s.replace("img/fixtures.png", "img/fixtures.pdf")
-    s = re.sub(r"\\includegraphics\[[^\]]*\]\{(img/board_populated\.pdf)\}",
+    s = re.sub(r"\\includegraphics\[[^\]]*\]\{(img/board_populated_v[\d.]+\.pdf)\}",
                r"\\includegraphics[width=\\textwidth,height=0.84\\textheight,keepaspectratio]{\1}", s)
     s = re.sub(r"\\includegraphics\[[^\]]*\]\{(img/(?:schematic|fixtures)\.pdf)\}",
                r"\\includegraphics[width=\\textwidth,height=0.885\\textheight,keepaspectratio]{\1}", s)

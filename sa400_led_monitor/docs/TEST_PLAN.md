@@ -1,13 +1,19 @@
 # Test Plan — SA400 Drive-Select / Write-Gate LED Monitor
 
-Document: `TEST_PLAN.md` · Project: `sa400_led_monitor` · Test-plan version **1.4** · created 2026-10-19 · updated 2026-10-19
+Document: `TEST_PLAN.md` · Project: `sa400_led_monitor` · Test-plan version **1.5** · created 2026-10-19 · updated 2026-10-19
 
-Revisions: 1.1 populated-board drawing and legend · 1.2 design-review findings folded in (§0.7, 2.6.17, 2.7.2, 2.7.4, 3.2.5, 3.3.7, §4, §5.3) · 1.3 drawings moved to appendices — A.1 board wireframe, A.2 legend, B schematic, C parts list — each on its own sheet (blank back) for double-sided printing · 1.4 Appendix D test-fixture drawings (jig, power pigtail, key plug) and Appendix E cable drawing
+Revisions: 1.1 populated-board drawing and legend · 1.2 design-review findings folded in (§0.7, 2.6.17, 2.7.2, 2.7.4, 3.2.5, 3.3.7, §4, §5.3) · 1.3 drawings moved to appendices — A.1 board wireframe, A.2 legend, B schematic, C parts list — each on its own sheet (blank back) for double-sided printing · 1.4 Appendix D test-fixture drawings (jig, power pigtail, key plug) and Appendix E cable drawing · 1.5 J2 handedness check 1.1.6a before any power; J2 is hand-fitted (JLCPCB left it off); repo workflow
 
-Colour key: <span style="color:#b00000">**red** = a stop condition, a limit not to exceed, or a correction to an earlier document</span> · <span style="color:#0040a0">**blue** = new or changed in revision 1.2 (the 2026-10-19 design review)</span>
+Colour key: <span style="color:#b00000">**red** = a stop condition, a limit not to exceed, or a correction to an earlier document</span> · <span style="color:#0040a0">**blue** = new or changed since revision 1.2 (the 2026-10-19 design review; 1.5 = the J2 handedness check)</span>
 
-Applies to: board rev **v0.2.2** copper (the 0.2.3 gerber changed Q1 silkscreen only), populated by JLCPCB
-from the **r2** BOM/CPL in `jlcpcb_v0.2.2/`.
+Applies to: the five **v0.2.3** boards in hand (copper identical to v0.2.2; the 0.2.3 gerber changed Q1's
+silkscreen only), populated by JLCPCB from the **r2** BOM/CPL in `jlcpcb_v0.2.2/`. <span style="color:#0040a0">**J2 is not fitted on any of
+them**: JLCPCB's Economic PCBA places one side only and J2 was the lone solder-side part. It is fitted by hand after
+the handedness check in 1.1.6a. The v0.2.4 design (J2 on the component side) is not fabricated yet; the result
+of 1.1.6a decides its `J2_PIN1_X` / `J2_PIN_DIR`.</span>
+
+Source of truth: https://github.com/xtracool/trs80-m1-drive-monitor — pull before a test session, push the
+filled-in record sheets and any plan change after it (commit message `testplan vN.M: <what>`).
 
 ---
 
@@ -61,7 +67,7 @@ the r2 BOM, so **this plan uses the r2 values**:
 - **GND fingers (15):** 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31.
 - **No-connect fingers (14):** 1 and 33 (they sit over the clip holes), and 2, 4, 8, 16, 18, 20, 22, 26, 28, 30, 32, 34.
 
-**J2 power (Mate-N-Lok, solder side, pin 1 = square pad).** 1 = +12 V, 2 = +12 RTN, 3 = +5 RTN, 4 = +5 V.
+**J2 power (Mate-N-Lok, pads on the solder side of the 0.2.3 boards, pin 1 = square pad at the Q1 end).** 1 = +12 V, 2 = +12 RTN, 3 = +5 RTN, 4 = +5 V. <span style="color:#0040a0">Not fitted by JLCPCB; hand-fitted on whichever side 1.1.6a says.</span>
 This is the same connector and pinout as a PC "Molex" 4-pin peripheral plug (yellow +12, black, black, red +5).
 
 **Power path.** J2-4 → F1 (PTC) → Q1 pin 2 (drain) → Q1 pin 3 (source) = **+5V rail** (also U1/U2/U3 pin 14,
@@ -146,13 +152,38 @@ a reading settles, because the capacitors charge through the meter.
 | 1.1.3 | D11: band (cathode) at the square pad. C4: + lead at the square pad | ✓ |
 | 1.1.4 | All LEDs: flat side / short lead (cathode) at the square pad. Colours: D1–D4 red, D5–D8 green, D12–D13 yellow | ✓ |
 | 1.1.5 | Resistor colour bands: R1–R8, R21, R14–R18 = 470 Ω (yellow-violet-brown); R9–R13 = 10 k (brown-black-orange); R19 = 2.2 k (red-red-black-brown for 1 %) | ✓ |
-| 1.1.6 | J2 is on the **solder side**, housing opening toward the rear edge, seated flat | ✓ |
-| 1.1.7 | Solder side: no bridges, especially across the J2 pins and the DIP rows. No flux balls | ✓ |
+| 1.1.6 | <span style="color:#0040a0">J2 is **not fitted** (JLCPCB left it off all five boards). It is fitted by hand **after** the handedness check 1.1.6a, on the side that check says, housing opening toward the recessed rear edge, seated flat, pin 1 (+12 V) in the square pad</span> | ✓ |
+| <span style="color:#0040a0">1.1.6a</span> | <span style="color:#b00000">**J2 handedness check — before 1.2, before anything is powered.** Procedure below this table. Record which side J2 ended up on and whether the first try passed.</span> | record |
+| 1.1.7 | Solder side: no bridges, especially across the DIP rows; after 1.1.6a, across the J2 pins. No flux balls | ✓ |
 | 1.1.8 | Fingers: gold, bevelled, **no solder or flux on any finger**, no lifted finger | ✓ |
 | 1.1.9 | Board thickness at the fingers (calipers): 1.37–1.78 mm (3M spec), expect 1.6 | record |
 | 1.1.10 | Fit test: push a **bare** 3463 connector (not on a live cable) onto the tab. It seats fully, and the key (if fitted) goes into the slot between pins 4 and 6. Remove it | ✓ |
-| 1.1.11 | Fit test: the power plug latches into J2 and only goes in one way | ✓ |
+| 1.1.11 | Fit test (after 1.1.6a): the power plug latches into J2 and only goes in one way | ✓ |
 | 1.1.12 | **Record the three ASSUMED dimensions** while you have calipers out: tab edge to corner (5.08 assumed), key-plug width (0.91), J2 pin drill (2.1) — see `docs/MECHANICAL.md` | record |
+
+### 1.1.6a J2 handedness check — do this before 1.2 and before any board is powered
+
+<span style="color:#0040a0">**Why.** The SA400 pinout fixes which *plug* pin carries +12 V, and the keyed plug fixes plug pin 1 ↔ header
+pin 1. Neither fixes which **end of the footprint** the header's pin 1 lands on: that depends on how the header
+itself is built, and nobody has verified it on a real part. Moving a header to the other side of the board mirrors
+its pins, so the same header can be right on one side and wrong on the other. On the 0.2.3 boards the J2 pads
+are on the solder side with the square (+12 V) pad at the Q1 end. See `docs/ASSEMBLY.md` §Polarity.</span>
+
+<span style="color:#b00000">If the mapping is wrong and the board is powered, +12 V goes into the +5 V input (fault F2, §0.7): F1 trips,
+D11 may fail. So: no power until this check passes.</span>
+
+| # | Step | Expect |
+|--|--------------------------------------------------|------------------------------|
+| <span style="color:#0040a0">a</span> | <span style="color:#0040a0">Nothing powered. Push the header (TE 350211-1 vertical, or 1-641737-1 right-angle) into its four holes from the **solder side** as drawn, pin 1 of the header toward the square pad, housing opening toward the recessed rear edge. **Do not solder.** Hold it square with a finger or a clip.</span> | <span style="color:#0040a0">seats fully; all four pins through</span> |
+| <span style="color:#0040a0">b</span> | <span style="color:#0040a0">Fit the drive power plug (the pigtail of Appendix D.2, **not connected to any supply**). It latches one way only.</span> | <span style="color:#0040a0">latches</span> |
+| <span style="color:#0040a0">c</span> | <span style="color:#0040a0">DMM in continuity / ohms: **yellow wire ↔ the pad printed "+12V"** (the square pad, component-side label `1`, solder-side label `1 +12V`).</span> | <span style="color:#0040a0">< 1 Ω</span> |
+| <span style="color:#0040a0">d</span> | <span style="color:#0040a0">Then **red wire ↔ "+5V" pad**, and each **black ↔ an RTN pad**. Also yellow ↔ "+5V" pad: must be **OL**.</span> | <span style="color:#0040a0">red < 1 Ω to +5V; blacks < 1 Ω to RTN; yellow to +5V = OL</span> |
+| <span style="color:#0040a0">**Pass**</span> | <span style="color:#0040a0">c and d as expected: unplug, **solder the header on the solder side** as drawn, refit the plug, repeat c and d once on the soldered joint.</span> | <span style="color:#0040a0">record "solder side, pass"</span> |
+| <span style="color:#0040a0">**Fail**</span> | <span style="color:#b00000">Yellow lands on "+5V" (red on "+12V"): **do not solder.** Pull the header out and push it in from the **component side** instead (housing opening still toward the rear edge). Repeat c and d; yellow must now land on "+12V". Solder it there.</span> <span style="color:#0040a0">Record "component side". This result is what the design session needs for v0.2.4: tell it, or open an issue in the repo (`J2_PIN1_X` / `J2_PIN_DIR` in `gen/config.py`).</span> | <span style="color:#0040a0">record "component side, first try failed"</span> |
+| <span style="color:#0040a0">e</span> | <span style="color:#0040a0">After soldering, on every board: 1.1.7 (no bridges across the J2 pins) and then 1.2.</span> | — |
+
+<span style="color:#0040a0">Do the check on board 1 with the first header; boards 2–5 get the same header part fitted the same way, but
+still get steps c and d before 1.2 (a header from a different batch can differ).</span>
 
 ### 1.2 Power connector — no shorts between rails
 
@@ -483,6 +514,7 @@ Tick ✓ or write the reading. One column per board.
 | 1.1.1–1.1.8 visual | | | | | |
 | 1.1.9 thickness (mm) | | | | | |
 | 1.1.10–1.1.11 fit | | | | | |
+| <span style="color:#0040a0">1.1.6a J2: yellow→+12V first try? side fitted</span> | | | | | |
 | 1.1.12 tab-corner / key / J2 drill (mm) | | | | | |
 | 1.2.1 +12↔+5 OL | | | | | |
 | 1.2.4 J2-4↔GND (Ω) | | | | | |
@@ -536,6 +568,7 @@ Tick ✓ or write the reading. One column per board.
 
 ## 6. TODO
 
+- [ ] <span style="color:#0040a0">1.1.6a J2 handedness check on board 1 → report the side to the design session (sets v0.2.4 `J2_PIN1_X` / `J2_PIN_DIR`)</span>
 - [ ] Build the bus-simulator jig (0.6)
 - [ ] Board 1: Phase 1 → Phase 2 (all, including 2.7/2.8) → Phase 3
 - [ ] Boards 2–5: Phase 1 → Phase 2 (2.1–2.6) → Phase 3 (3.3.1–3.3.4)
@@ -550,7 +583,7 @@ Tick ✓ or write the reading. One column per board.
 
 ### A.1 Populated board, component side (wireframe)
 
-![Populated board, component side, wireframe. Generated by `gen/render_populated.py` from the footprint positions in `gen/design.py`; values are the as-built r2 BOM. J1 fingers at the top, pin 2 at the right; J2 (dashed) is on the solder side.](img/board_populated.png){width=100%}
+![The v0.2.3 boards in hand, component side, wireframe (drawing frozen 2026-10-19 from the v0.2.3 generator; `gen/render_populated.py` now draws the current design, v0.2.4). Values are the as-built r2 BOM. J1 fingers at the top, pin 2 at the right; the J2 pads (dashed) are on the solder side, square pad = pin 1 = +12 V at the Q1 end; J2 itself is fitted by hand per 1.1.6a.](img/board_populated_v0.2.3.png){width=100%}
 
 ### A.2 Legend for A.1
 
@@ -573,7 +606,7 @@ Tick ✓ or write the reading. One column per board.
 | D5–D8 | Green 5 mm LED (G) | Same | Drive 1–4 WRITE GATE | Same |
 | D12, D13 | Yellow 5 mm LED (Y) | Same | "12V" and "5V" present | Same |
 | J1 | 34-contact card edge (gold fingers) | Rectangles on the tab; bold numbers = monitored lines 6/10/12/14/24 | Shugart bus | Even pins on top, odd under them; key slot between 4 and 6 |
-| J2 | TE/AMP Mate-N-Lok 350211-1 | **Dashed grey**: it sits on the solder side | Power in: 1 +12 V, 2/3 RTN, 4 +5 V | Pin 1 = square pad |
+| J2 | TE/AMP Mate-N-Lok 350211-1 (or 1-641737-1 right-angle) | **Dashed grey**: pads on the solder side; <span style="color:#0040a0">not fitted by JLCPCB</span> | Power in: 1 +12 V, 2/3 RTN, 4 +5 V | Pin 1 = square pad; <span style="color:#0040a0">side decided by 1.1.6a</span> |
 | H1–H4 | M3 mounting holes | Circle in a dashed ring | Standoffs | — |
 
 Conventions: a **square pad** is pin 1, a cathode, or a capacitor's + lead. **Dashed** means a socket or a
@@ -605,7 +638,7 @@ part on the solder side. Drive *n* on the board is TRS-80 drive *:n−1*.
 | 1 | R19 | YAGEO MFR-25FTE52-2K2 | 2.2 kΩ, ¼ W, 1 % | axial, vertical 7.62 mm | C172997 | +12 V indicator series, ≈ 4.5 mA. Design docs: 4.7 kΩ |
 | 4 | C1, C2, C3, C6 | Ceramic disc | 100 nF, 50 V | 2.5 mm pitch | C45664 | Decoupling U1–U3; rail entry (C6) |
 | 1 | C4 | Electrolytic, radial | 10 µF, 16 V | 5 mm dia, 2.5 mm pitch | C53330112 | Bulk on +5 V; + lead in the square pad |
-| 1 | J2 | TE 350211-1 Mate-N-Lok 4-position right-angle header | — | solder side | C305826 | SA400 pinout: 1 +12 V, 2/3 RTN, 4 +5 V; pin 1 = square pad |
+| 1 | J2 | TE 350211-1 Mate-N-Lok 4-position header (vertical; 1-641737-1 is the right-angle equivalent on the same pads) | — | pads on the solder side | C305826 | SA400 pinout: 1 +12 V, 2/3 RTN, 4 +5 V; pin 1 = square pad. <span style="color:#0040a0">**Not fitted by JLCPCB** — hand-fit after 1.1.6a</span> |
 | — | J1 | 34-contact card edge, part of the PCB | gold fingers, bevel | — | — | Even pins on the component side, odd (GND) underneath; key slot between 4 and 6 |
 | 4 | H1–H4 | M3 × 6 mm standoff + M3 screw (or #4-40) | — | — | — | Not in the JLCPCB order |
 

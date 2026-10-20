@@ -5,8 +5,12 @@ Every part body (ICs in sockets, LEDs, resistors, capacitors, Q1, D11, F1, and J
 ghost because it sits on the solder side) is drawn as an outline at its real footprint position
 from gen/design.py. Labels show the AS-BUILT values (JLCPCB r2 BOM). Black on white, made for print.
 
+Draws whatever gen/config.py + gen/design.py currently describe (config.VERSION); the file name carries
+that version.  The test plan uses a FROZEN copy for the boards in hand (docs/img/board_populated_v0.2.3.*),
+see pdf/build_test_plan.py.
+
 Usage (from the project root):
-    python gen/render_populated.py                  -> output/board_populated.png + .pdf
+    python gen/render_populated.py                  -> output/board_populated_v<VERSION>.png + .pdf
     python gen/render_populated.py --out docs/img   -> same files into another folder
 
 Exit codes: 0 ok, 1 error, 130 interrupted (Ctrl-C).
@@ -105,18 +109,21 @@ def main():
             else:
                 circ(p.x, p.y, min(p.size) * 0.28, lw=LW_THIN)
 
-    # ---- J2 on the solder side: dashed ghost
+    # ---- J2: dashed ghost when its pads are on the solder side (0.2.x), solid when on the component side (0.2.4+)
     j2 = sorted(by["J2"].pads, key=lambda q: int(q.number))
     xs = [p.x for p in j2]
-    box(min(xs) - 4, rec + 0.6, max(xs) - min(xs) + 8, C.J2_ROW_Y + 4 - rec - 0.6, ec=GHOST, ls=(0, (3, 2)))
+    j2_bottom = by["J2"].layer.startswith("B")
+    j2_ec, j2_ls = (GHOST, (0, (3, 2))) if j2_bottom else (INK, "-")
+    box(min(xs) - 4, rec + 0.6, max(xs) - min(xs) + 8, C.J2_ROW_Y + 4 - rec - 0.6, ec=j2_ec, ls=j2_ls)
     for i, p in enumerate(j2):
         if i == 0:
-            ax.add_patch(Rectangle((p.x - 1.2, p.y - 1.2), 2.4, 2.4, fc="none", ec=GHOST, lw=LW_THIN))
+            ax.add_patch(Rectangle((p.x - 1.2, p.y - 1.2), 2.4, 2.4, fc="none", ec=j2_ec, lw=LW_THIN))
         else:
-            circ(p.x, p.y, 1.2, lw=LW_THIN, ec=GHOST)
-        txt(p.x, p.y - 3.2, f"{p.number}", 4.0, color=GHOST)
-        txt(p.x, p.y + 2.9, ["+12V", "RTN", "RTN", "+5V"][i], 3.8, color=GHOST)
-    txt((min(xs) + max(xs)) / 2, C.J2_ROW_Y + 6.2, "J2 power — on SOLDER side (dashed)", 4.6, color=GHOST)
+            circ(p.x, p.y, 1.2, lw=LW_THIN, ec=j2_ec)
+        txt(p.x, p.y - 3.2, f"{p.number}", 4.0, color=j2_ec)
+        txt(p.x, p.y + 2.9, ["+12V", "RTN", "RTN", "+5V"][i], 3.8, color=j2_ec)
+    txt((min(xs) + max(xs)) / 2, C.J2_ROW_Y + 6.2,
+        "J2 power — on SOLDER side (dashed)" if j2_bottom else "J2 power — component side", 4.6, color=j2_ec)
 
     # ---- part bodies
     for f in fps:
@@ -200,16 +207,17 @@ def main():
             txt(f.x, f.y - 4.4, ref, 4.6, bold=True)
 
     # ---- titles and drive labels
-    txt(48, 52, "sa400_led_monitor v0.2.2 — populated, as built (r2 BOM)", 7.2, bold=True)
+    txt(48, 52, f"sa400_led_monitor v{C.VERSION} — populated, as built (r2 BOM)", 7.2, bold=True)
     txt(48, 56.5, "Component side, top view · J1 fingers point away · J1 pin 2 at right", 5.2)
     txt(48, 60.5, "Dashed = socket or solder-side part · square pad = pin 1 / cathode / +", 5.2)
     for n, x in enumerate([34.29, 59.69, 85.09, 110.49]):
         txt(x, 124.2, f"DRIVE {n + 1}  (TRS-80 :{n})", 5.4, bold=True)
 
     os.makedirs(args.out, exist_ok=True)
+    name = f"board_populated_v{C.VERSION}"
     for ext in ("png", "pdf"):
-        fig.savefig(os.path.join(args.out, f"board_populated.{ext}"), dpi=300, facecolor="white")
-    print(f"[render_populated] wrote {args.out}/board_populated.png and .pdf")
+        fig.savefig(os.path.join(args.out, f"{name}.{ext}"), dpi=300, facecolor="white")
+    print(f"[render_populated] wrote {args.out}/{name}.png and .pdf")
     return 0
 
 
