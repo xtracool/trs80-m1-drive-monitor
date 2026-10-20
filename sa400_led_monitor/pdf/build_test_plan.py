@@ -13,8 +13,9 @@ Steps:
      Markdown <span style="color:#rrggbb"> markup into \textcolor (red = caution / correction,
      blue = new in this revision)
   3. patch the .tex: vector PDF figures instead of the PNGs; Appendix A (board), B (schematic) and
-     C (parts list), D (fixtures) and E (cable, landscape page) each start on a right-hand page
-     (twoside + cleardoublepage, blank versos say so); taller rows on the record sheets
+     C (parts list) and D (fixtures) each start on a right-hand page (twoside + cleardoublepage, blank
+     versos say so) so A.1, A.2, B and C have nothing on their backs; E (cable, landscape) is the back of D;
+     taller rows on the record sheets
   4. lualatex x3 (LastPage needs the extra passes)
 
 Usage (from the project root, needs pandoc + LuaLaTeX with fontspec/fancyhdr/lastpage):
@@ -31,7 +32,7 @@ import shutil
 import subprocess
 import sys
 
-VERSION = "1.5"
+VERSION = "1.6"
 BOARD_REV = "0.2.3"      # the boards the plan is written for; the frozen drawing docs/img/board_populated_v0.2.3.*
 CREATED = "2026-10-19"
 UPDATED = "2026-10-19"
@@ -134,7 +135,7 @@ def main():
     s = before_heading(s, "Appendix B ---", "\\cleardoublepage")
     s = before_heading(s, "Appendix C ---", "\\cleardoublepage")
     s = before_heading(s, "Appendix D ---", "\\cleardoublepage")
-    s = before_heading(s, "Appendix E ---", "\\cleardoublepage\\begin{landscape}")   # wide, short drawing
+    s = before_heading(s, "Appendix E ---", "\\clearpage\\begin{landscape}")   # wide, short drawing; shares D's sheet
     s = s.replace("\\end{document}", "\\end{landscape}\n\\end{document}")
     s = re.sub(r"\\includegraphics\[[^\]]*\]\{(\.\./output/cable\.png)\}",
                r"\\includegraphics[width=\\linewidth]{\1}", s)

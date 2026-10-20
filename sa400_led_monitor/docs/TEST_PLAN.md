@@ -1,8 +1,8 @@
 # Test Plan — SA400 Drive-Select / Write-Gate LED Monitor
 
-Document: `TEST_PLAN.md` · Project: `sa400_led_monitor` · Test-plan version **1.5** · created 2026-10-19 · updated 2026-10-19
+Document: `TEST_PLAN.md` · Project: `sa400_led_monitor` · Test-plan version **1.6** · created 2026-10-19 · updated 2026-10-19
 
-Revisions: 1.1 populated-board drawing and legend · 1.2 design-review findings folded in (§0.7, 2.6.17, 2.7.2, 2.7.4, 3.2.5, 3.3.7, §4, §5.3) · 1.3 drawings moved to appendices — A.1 board wireframe, A.2 legend, B schematic, C parts list — each on its own sheet (blank back) for double-sided printing · 1.4 Appendix D test-fixture drawings (jig, power pigtail, key plug) and Appendix E cable drawing · 1.5 J2 handedness check 1.1.6a before any power; J2 is hand-fitted (JLCPCB left it off); repo workflow
+Revisions: 1.1 populated-board drawing and legend · 1.2 design-review findings folded in (§0.7, 2.6.17, 2.7.2, 2.7.4, 3.2.5, 3.3.7, §4, §5.3) · 1.3 drawings moved to appendices — A.1 board wireframe, A.2 legend, B schematic, C parts list — each on its own sheet (blank back) for double-sided printing · 1.4 Appendix D test-fixture drawings (jig, power pigtail, key plug) and Appendix E cable drawing · 1.5 J2 handedness check 1.1.6a before any power; J2 is hand-fitted (JLCPCB left it off); repo workflow · 1.6 only A.1, A.2, B and C have blank backs; D and E share a sheet
 
 Colour key: <span style="color:#b00000">**red** = a stop condition, a limit not to exceed, or a correction to an earlier document</span> · <span style="color:#0040a0">**blue** = new or changed since revision 1.2 (the 2026-10-19 design review; 1.5 = the J2 handedness check)</span>
 
